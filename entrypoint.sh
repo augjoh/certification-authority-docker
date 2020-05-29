@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# Change workdir to /data so that files (ie. certificates) are going to be
+# created there
+cd /data
+
 apache2() {
     while [ ! -f Sub/https.crt.pem ]; do
       sleep 3
@@ -11,4 +15,4 @@ apache2() {
 /usr/sbin/httpd -v
 apache2 &
 
-exec su -c "npm start -- --userDir /data" node-red
+exec su -c "node $NODE_OPTIONS /usr/src/node-red/node_modules/node-red/red.js --userDir /data $FLOWS" node-red
