@@ -106,9 +106,10 @@ acme:
   image: debian:latest
   services:
     - name: "$CI_REGISTRY_IMAGE:latest"
-      alias: nodejs.rz-bsd.my.corp
+      alias: "$HOSTNAME"
   stage: test
   variables:
+    HOSTNAME: nodejs.rz-bsd.my.corp
     FF_NETWORK_PER_BUILD: 1
     CERTBOT_DIR: certbot
     CERTBOT_ARGS: "--config-dir=${CERTBOT_DIR}/etc/ --work-dir=${CERTBOT_DIR}/work/ --logs-dir=${CERTBOT_DIR}/log/ --server=https://nodejs.rz-bsd.my.corp/acme/Sub/"
