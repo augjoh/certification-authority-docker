@@ -106,13 +106,13 @@ acme:
   image: debian:latest
   services:
     - name: "$CI_REGISTRY_IMAGE:latest"
-      alias: "$HOSTNAME"
+      alias: "nodejs.rz-bsd.my.corp"
   stage: test
   variables:
     HOSTNAME: nodejs.rz-bsd.my.corp
     FF_NETWORK_PER_BUILD: 1
     CERTBOT_DIR: certbot
-    CERTBOT_ARGS: "--config-dir=${CERTBOT_DIR}/etc/ --work-dir=${CERTBOT_DIR}/work/ --logs-dir=${CERTBOT_DIR}/log/ --server=https://nodejs.rz-bsd.my.corp/acme/Sub/"
+    CERTBOT_ARGS: "--config-dir=${CERTBOT_DIR}/etc/ --work-dir=${CERTBOT_DIR}/work/ --logs-dir=${CERTBOT_DIR}/log/ --server=https://${HOSTNAME}/acme/Sub/"
   before_script:
     - apt-get update
     - apt-get install -y certbot curl
@@ -126,7 +126,7 @@ acme:
     - certbot register ${CERTBOT_ARGS} --no-eff-email --email=node@my.corp --agree-tos
     # - certbot certonly ${CERTBOT_ARGS} --standalone -d ${NAME}
     # - certbot revoke ${CERTBOT_ARGS} --no-delete-after-revoke --cert-path "${CERTBOT_DIR}/etc/live/${NAME}/cert.pem"
-    # - openssl ocsp -CAfile root.crt.pem -issuer sub.crt.pem -trust_other -cert "${CERTBOT_DIR}/etc/live/${NAME}/cert.pem" -url http://nodejs.rz-bsd.my.corp/ocsp/Sub/
+    # - openssl ocsp -CAfile root.crt.pem -issuer sub.crt.pem -trust_other -cert "${CERTBOT_DIR}/etc/live/${NAME}/cert.pem" -url http://${HOSTNAME}/ocsp/Sub/
   artifacts:
     when: on_failure
     paths:
