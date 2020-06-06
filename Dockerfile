@@ -6,10 +6,8 @@ COPY flows/package.json .
 RUN npm install --only=production \
  && sed -i 's/alg:"SHA1withRSA"/alg:this.asn1SignatureAlg.nameAlg/' /usr/src/node-red/node_modules/jsrsasign/lib/jsrsasign.js
 
-# We'll likely need to add SSL root certificates
 USER root
 RUN apk --no-cache add apache2-ssl \
-                       apache2-utils \
                        apache2-proxy \
                        ca-certificates \
                        openssl
