@@ -1,6 +1,6 @@
 FROM nodered/node-red:latest
 
-COPY flows/settings.js /data/settings.js
+COPY settings.js /data/settings.js
 COPY flows/flows_nodejs.json /data/flows.json
 COPY flows/package.json .
 RUN npm install --only=production \
