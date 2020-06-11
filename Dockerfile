@@ -21,10 +21,10 @@ RUN rm -f /etc/ssl/apache2/server.{key,pem} \
  && ln -sf /data/Sub/https.crt.pem /etc/ssl/apache2/server.pem \
  && ln -sf /data/Sub/https.priv.key.pem /etc/ssl/apache2/server.key \
  && ln -sf /data/Sub/ca.crt.pem /etc/ssl/apache2/server-ca.pem \
- && mkdir $(awk '/^SSLCACertificatePath/ { print $2 }') \
+ && mkdir $(awk '/^SSLCACertificatePath/ { print $2 }') /etc/apache2/conf.d/ssl.conf \
  && ln -sf /data/Root/ca.crt.pem /etc/ssl/apache2/capath/Root.ca.crt \
  && ln -sf /data/Admin/ca.crt.pem /etc/ssl/apache2/capath/Admin.ca.crt \
- && mkdir $(awk '/^SSLCARevocationPath/ { print $2 }') \
+ && mkdir $(awk '/^SSLCARevocationPath/ { print $2 }') /etc/apache2/conf.d/ssl.conf \
  && ln -sf /data/Root/crl.pem /etc/ssl/apache2/capath/Root.crl \
  && ln -sf /data/Sub/crl.pem /etc/ssl/apache2/capath/Sub.crl \
  && ln -sf /data/Admin/crl.pem /etc/ssl/apache2/capath/Admin.crl
