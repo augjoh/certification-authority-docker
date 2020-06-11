@@ -21,13 +21,15 @@ RUN rm -f /etc/ssl/apache2/server.{key,pem} \
  && ln -sf /data/Sub/https.crt.pem /etc/ssl/apache2/server.pem \
  && ln -sf /data/Sub/https.priv.key.pem /etc/ssl/apache2/server.key \
  && ln -sf /data/Sub/ca.crt.pem /etc/ssl/apache2/server-ca.pem \
- && mkdir -p $(awk '/^SSLCACertificatePath/ { print $2 }' /etc/apache2/conf.d/ssl.conf) \
- && ln -sf /data/Root/ca.crt.pem /etc/ssl/apache2/capath/Root.ca.crt \
- && ln -sf /data/Admin/ca.crt.pem /etc/ssl/apache2/capath/Admin.ca.crt \
- && mkdir -p $(awk '/^SSLCARevocationPath/ { print $2 }' /etc/apache2/conf.d/ssl.conf) \
- && ln -sf /data/Root/crl.pem /etc/ssl/apache2/capath/Root.crl \
- && ln -sf /data/Sub/crl.pem /etc/ssl/apache2/capath/Sub.crl \
- && ln -sf /data/Admin/crl.pem /etc/ssl/apache2/capath/Admin.crl
+ && SSLCACertificatePath=$(awk '/^SSLCACertificatePath/ { print $2 }' /etc/apache2/conf.d/ssl.conf) \
+ && mkdir -p "$SSLCACertificatePath" \
+ && ln -sf /data/Root/ca.crt.pem "$SSLCACertificatePath/Root.ca.crt" \
+ && ln -sf /data/Admin/ca.crt.pem "$SSLCACertificatePath/Admin.ca.crt" \
+ && SSLCARevocationPath=$(awk '/^SSLCARevocationPath/ { print $2 }' /etc/apache2/conf.d/ssl.conf) \
+ && mkdir -p "$SSLCARevocationPath" \
+ && ln -sf /data/Root/crl.pem "$SSLCARevocationPath/Root.crl" \
+ && ln -sf /data/Sub/crl.pem "$SSLCARevocationPath/Sub.crl" \
+ && ln -sf /data/Admin/crl.pem "$SSLCARevocationPath/Admin.crl"
 
 EXPOSE 80 3180 443
 
