@@ -14,5 +14,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Update submodules
+      run: git submodule update --init
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag platynum/certification-authority-docker:$(date +%s)
