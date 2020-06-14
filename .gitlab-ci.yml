@@ -106,6 +106,23 @@ https:
     - openssl s_client -showcerts -CAfile root.crt.pem -connect nodejs.rz-bsd.my.corp:443 </dev/null
     - openssl s_client -showcerts -connect nodejs.rz-bsd.my.corp:443 | openssl x509 -noout -text
 
+websocket:
+  image: debian:latest
+  services:
+    - name: "${CI_REGISTRY_IMAGE}:latest"
+      alias: nodejs.rz-bsd.my.corp
+  stage: test
+  variables:
+    FF_NETWORK_PER_BUILD: 1
+    HOSTNAME: nodejs.rz-bsd.my.corp
+  before_script:
+    - apt-get update
+    - apt-get install -y curl openssl
+    - curl http://nodejs.rz-bsd.my.corp/download/Root/ca.crt.pem > root.crt.pem
+  script:
+    - echo "groot" | curl --cacert root.crt.pem --location --include --no-buffer --header "Connection: Upgrade" --header "Upgrade: websocket" --header "Host: ${HOSTNAME}" --header "Origin: ${HOSTNAME}" --header "Sec-WebSocket-Key: `openssl rand 16 | openssl enc -base64`" --header "Sec-WebSocket-Version: 13" https://${HOSTNAME}/admin/comms
+  when: manual
+
 acme:
   image: debian:latest
   services:
@@ -135,3 +152,4 @@ acme:
     when: on_failure
     paths:
       - ${CERTBOT_DIR}/log/
+
