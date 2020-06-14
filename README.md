@@ -25,10 +25,24 @@ the user inerface (UI).
 
 The user interface (UI) of the CA is protected via Client Certiciate
 Authentication (CCA). The key/certificate is generated automatically
-during startup. To generate a PKCCS12/PFX container you have to combine
+during startup. To generate a PKCS12/PFX container you have to combine
 the generated files with the following shell commands inside the
 container:
 
     $ CAFILE=$(mktemp)
     $ cat Admin/ca.crt.pem Sub/ca.crt.pem Root/ca.crt.pem >${CAFILE}
     $ openssl pkcs12 -in Admin/??[a-f1-9]*.crt.pem -inkey Admin/??[a-f1-9]*.priv.key.pem -export -out Admin.pfx -chain -CAfile ${CAFILE} -password pass:password
+
+## Import PKCS12/PFX container
+
+Import this container into the certificate store:
+
+    PS C:\>$mypwd = Get-Credential -UserName 'Enter password below' -Message 'Enter password below'
+    PS C:\>Import-PfxCertificate -FilePath C:\Admin.pfx -CertStoreLocation Cert:\CurrentUser\My -Password $mypwd.Password
+
+# License
+
+Certification Authority (CA) docker source code files are made
+available under GNU Affero General Public License, Version 3.0,
+located in the (LICENSE) file.
+
