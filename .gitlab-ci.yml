@@ -58,18 +58,22 @@ crls:
   image: debian:latest
   services:
     - name: "$CI_REGISTRY_IMAGE:latest"
-      alias: node-red
+      alias: nodejs.rz-bsd.my.corp
   stage: test
+  variables:
+    HOSTNAME: nodejs.rz-bsd.my.corp
+    FF_NETWORK_PER_BUILD: 1
   before_script:
     - apt-get update
     - apt-get install -y curl openssl
   script:
-    - curl http://node-red/download/Root/ca.crt.pem > root.crt.pem
-    - curl http://node-red/download/Root/crl.pem > root.crl.pem
+    - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
+    - curl http://${HOSTNAME}/download/Root/crl.pem > root.crl.pem
     - openssl crl -CAfile root.crt.pem -noout -text -in root.crl.pem -verify
-    - curl http://node-red/download/Sub/ca.crt.pem > sub.crt.pem
-    - curl http://node-red/download/Sub/crl.pem > sub.crl.pem
+    - curl http://${HOSTNAME}/download/Sub/ca.crt.pem > sub.crt.pem
+    - curl http://${HOSTNAME}/download/Sub/crl.pem > sub.crl.pem
     - openssl crl -CAfile sub.crt.pem -noout -text -in sub.crl.pem -verify
+    - openssl verify -CAfile root.crt.pem -crl_download -crl_check sub.crt.pem
     
 ocsp:
   image: debian:latest
