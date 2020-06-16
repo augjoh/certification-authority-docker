@@ -5,8 +5,32 @@ Authority (https://gitlab.com/platynum/certification-authority).
 
 ## Configuration
 
-Consult the [documentation of the node-red base image](https://nodered.org/docs/getting-started/docker)
-for all possible configuration options.
+Consult the [documentation of the node-red](https://nodered.org/docs/user-guide/runtime/configuration)
+for all possible configuration options. Some of them have been mapped
+to environment variables. If you are using docker, you can specify them
+using the `-e` command line flag.
+
+The following configuration items in settings.js can be configured using
+environment variables:
+
+ * `credentialSecret`: `NODE_RED_CREDENTIAL_SECRET`, this setting has
+   **no default**
+ * `logging.console.level`: `NODE_RED_LOGGING_CONSOLE_LEVEL` defaults to
+   `info`
+ * `httpAdminRoot`: `NODE_RED_HTTP_ADMIN_ROOT` || defaults to '/admin'
+
+The following settings should not be changed, unless you know what your
+are doing, otherwise the Apache reverse proxy might not function
+correctly!
+
+ * `uiHost`: `NODE_RED_UI_HOST`, defaults to `127.0.0.1`
+ * `uiPort`: `NODE_RED_UI_PORT`, defaults to `1880`
+ * `disableEditor`: `NODE_RED_DISABLE_EDITOR`, defaults to `true`
+ * `editorTheme.projects.enabled`: `NODE_RED_ENABLE_PROJECTS`, defaults
+   to `false`
+
+The [page of node-red's docker container](https://nodered.org/docs/getting-started/docker)
+contains additional information about the base image for this container.
 
 ## Start container
 
@@ -44,5 +68,5 @@ Import this container into the certificate store:
 
 Certification Authority (CA) docker source code files are made
 available under GNU Affero General Public License, Version 3.0,
-located in the (LICENSE) file.
+located in the [LICENSE](LICENSE) file.
 
