@@ -36,8 +36,8 @@ downloads:
       alias: nodejs.rz-bsd.my.corp
   stage: test
   before_script:
-    - apt-get update
-    - apt-get install -y curl
+    - apt-get -q update
+    - apt-get -q install -y curl
   script:
     - curl -v http://${HOSTNAME}/
     - curl -v http://${HOSTNAME}/download/Root/ca.crt.pem
@@ -49,8 +49,8 @@ chain:
       alias: nodejs.rz-bsd.my.corp
   stage: test
   before_script:
-    - apt-get update
-    - apt-get install -y curl openssl
+    - apt-get -q update
+    - apt-get -q install -y curl openssl
   script:
     - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
     - curl http://${HOSTNAME}/download/Sub/ca.crt.pem > sub.crt.pem
@@ -63,8 +63,8 @@ crls:
       alias: nodejs.rz-bsd.my.corp
   stage: test
   before_script:
-    - apt-get update
-    - apt-get install -y curl openssl
+    - apt-get -q update
+    - apt-get -q install -y curl openssl
   script:
     - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
     - curl http://${HOSTNAME}/download/Root/crl.pem > root.crl.pem
@@ -81,8 +81,8 @@ ocsp:
       alias: nodejs.rz-bsd.my.corp
   stage: test
   before_script:
-    - apt-get update
-    - apt-get install -y curl openssl
+    - apt-get -q update
+    - apt-get -q install -y curl openssl
     - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
     - curl http://${HOSTNAME}/download/Sub/ca.crt.pem > sub.crt.pem
     - curl http://${HOSTNAME}/download/Sub/ocsp.crt.pem > ocsp.crt.pem
@@ -96,8 +96,8 @@ https:
       alias: nodejs.rz-bsd.my.corp
   stage: test
   before_script:
-    - apt-get update
-    - apt-get install -y curl openssl
+    - apt-get -q update
+    - apt-get -q install -y curl openssl
     - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
   script:
     - openssl s_client -showcerts -CAfile root.crt.pem -connect ${HOSTNAME}:443 </dev/null
@@ -110,11 +110,11 @@ websocket:
       alias: nodejs.rz-bsd.my.corp
   stage: test
   before_script:
-    - apt-get update
-    - apt-get install -y curl openssl
+    - apt-get -q update
+    - apt-get -q install -y curl openssl
     - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
   script:
-    - "echo 'I\'m groot' | curl --cacert root.crt.pem --location --include --no-buffer --header 'Connection: Upgrade' --header 'Upgrade: websocket' --header 'Host: ${HOSTNAME}' --header 'Origin: ${HOSTNAME}' --header 'Sec-WebSocket-Key: $(openssl rand 16 | openssl enc -base64)' --header 'Sec-WebSocket-Version: 13' https://${HOSTNAME}/admin/comms"
+    - "echo 'I am groot' | curl --cacert root.crt.pem --location --include --no-buffer --header 'Connection: Upgrade' --header 'Upgrade: websocket' --header 'Host: ${HOSTNAME}' --header 'Origin: ${HOSTNAME}' --header 'Sec-WebSocket-Key: $(openssl rand 16 | openssl enc -base64)' --header 'Sec-WebSocket-Version: 13' https://${HOSTNAME}/admin/comms"
   when: manual
 
 acme:
@@ -127,8 +127,8 @@ acme:
     CERTBOT_DIR: certbot
     CERTBOT_ARGS: "--config-dir=${CERTBOT_DIR}/etc/ --work-dir=${CERTBOT_DIR}/work/ --logs-dir=${CERTBOT_DIR}/log/ --server=https://${HOSTNAME}/acme/Sub/"
   before_script:
-    - apt-get update
-    - apt-get install -y certbot curl
+    - apt-get -q update
+    - apt-get -q install -y certbot curl
     - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
     - curl http://${HOSTNAME}/download/Sub/ca.crt.pem > sub.crt.pem
   script:
