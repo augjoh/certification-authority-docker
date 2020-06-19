@@ -118,9 +118,9 @@ websocket:
   before_script:
     - apt-get update
     - apt-get install -y curl openssl
-    - curl http://nodejs.rz-bsd.my.corp/download/Root/ca.crt.pem > root.crt.pem
+    - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
   script:
-    - echo "I'm groot" | curl --cacert root.crt.pem --location --include --no-buffer --header "Connection: Upgrade" --header "Upgrade: websocket" --header "Host: ${HOSTNAME}" --header "Origin: ${HOSTNAME}" --header "Sec-WebSocket-Key: $(openssl rand 16 | openssl enc -base64)" --header "Sec-WebSocket-Version: 13" https://${HOSTNAME}/admin/comms
+    - "echo 'I\'m groot' | curl --cacert root.crt.pem --location --include --no-buffer --header 'Connection: Upgrade' --header 'Upgrade: websocket' --header 'Host: ${HOSTNAME}' --header 'Origin: ${HOSTNAME}' --header 'Sec-WebSocket-Key: $(openssl rand 16 | openssl enc -base64)' --header 'Sec-WebSocket-Version: 13' https://${HOSTNAME}/admin/comms"
   when: manual
 
 acme:
