@@ -5,6 +5,8 @@ stages:
 
 variables:
   GIT_SUBMODULE_STRATEGY: normal
+  HOSTNAME: nodejs.rz-bsd.my.corp
+  FF_NETWORK_PER_BUILD: 1
   
 buildah:
   image: centos:latest
@@ -21,7 +23,7 @@ buildah:
 #        - flows/
 
 internal:
-  image: "$CI_REGISTRY_IMAGE:latest"
+  image: "${CI_REGISTRY_IMAGE}:latest"
   stage: test
   script:
     - unreached
@@ -30,39 +32,36 @@ internal:
 downloads:
   image: debian:latest
   services:
-    - name: "$CI_REGISTRY_IMAGE:latest"
-      alias: node-red
+    - name: "${CI_REGISTRY_IMAGE}:latest"
+      alias: nodejs.rz-bsd.my.corp
   stage: test
   before_script:
     - apt-get update
     - apt-get install -y curl
   script:
-    - curl -v http://node-red/
-    - curl -v http://node-red/download/Root/ca.crt.pem
+    - curl -v http://${HOSTNAME}/
+    - curl -v http://${HOSTNAME}/download/Root/ca.crt.pem
 
 chain:
   image: debian:latest
   services:
-    - name: "$CI_REGISTRY_IMAGE:latest"
-      alias: node-red
+    - name: "${CI_REGISTRY_IMAGE}:latest"
+      alias: nodejs.rz-bsd.my.corp
   stage: test
   before_script:
     - apt-get update
     - apt-get install -y curl openssl
   script:
-    - curl http://node-red/download/Root/ca.crt.pem > root.crt.pem
-    - curl http://node-red/download/Sub/ca.crt.pem > sub.crt.pem
+    - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
+    - curl http://${HOSTNAME}/download/Sub/ca.crt.pem > sub.crt.pem
     - openssl verify -verbose -check_ss_sig -CAfile root.crt.pem sub.crt.pem
 
 crls:
   image: debian:latest
   services:
-    - name: "$CI_REGISTRY_IMAGE:latest"
+    - name: "${CI_REGISTRY_IMAGE}:latest"
       alias: nodejs.rz-bsd.my.corp
   stage: test
-  variables:
-    HOSTNAME: nodejs.rz-bsd.my.corp
-    FF_NETWORK_PER_BUILD: 1
   before_script:
     - apt-get update
     - apt-get install -y curl openssl
@@ -78,33 +77,31 @@ crls:
 ocsp:
   image: debian:latest
   services:
-    - name: "$CI_REGISTRY_IMAGE:latest"
-      alias: node-red
+    - name: "${CI_REGISTRY_IMAGE}:latest"
+      alias: nodejs.rz-bsd.my.corp
   stage: test
   before_script:
     - apt-get update
     - apt-get install -y curl openssl
-    - curl http://node-red/download/Root/ca.crt.pem > root.crt.pem
-    - curl http://node-red/download/Sub/ca.crt.pem > sub.crt.pem
-    - curl http://node-red/download/Sub/ocsp.crt.pem > ocsp.crt.pem
+    - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
+    - curl http://${HOSTNAME}/download/Sub/ca.crt.pem > sub.crt.pem
+    - curl http://${HOSTNAME}/download/Sub/ocsp.crt.pem > ocsp.crt.pem
   script:
-    - openssl ocsp -CAfile root.crt.pem -issuer sub.crt.pem -trust_other -cert ocsp.crt.pem -url http://node-red/ocsp/Sub/
+    - openssl ocsp -CAfile root.crt.pem -issuer sub.crt.pem -trust_other -cert ocsp.crt.pem -url http://${HOSTNAME}/ocsp/Sub/
 
 https:
   image: debian:latest
   services:
-    - name: "$CI_REGISTRY_IMAGE:latest"
+    - name: "${CI_REGISTRY_IMAGE}:latest"
       alias: nodejs.rz-bsd.my.corp
   stage: test
-  variables:
-    FF_NETWORK_PER_BUILD: 1
   before_script:
     - apt-get update
     - apt-get install -y curl openssl
-    - curl http://nodejs.rz-bsd.my.corp/download/Root/ca.crt.pem > root.crt.pem
+    - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
   script:
-    - openssl s_client -showcerts -CAfile root.crt.pem -connect nodejs.rz-bsd.my.corp:443 </dev/null
-    - openssl s_client -showcerts -connect nodejs.rz-bsd.my.corp:443 | openssl x509 -noout -text
+    - openssl s_client -showcerts -CAfile root.crt.pem -connect ${HOSTNAME}:443 </dev/null
+    - openssl s_client -showcerts -connect ${HOSTNAME}:443 | openssl x509 -noout -text
 
 websocket:
   image: debian:latest
@@ -112,9 +109,6 @@ websocket:
     - name: "${CI_REGISTRY_IMAGE}:latest"
       alias: nodejs.rz-bsd.my.corp
   stage: test
-  variables:
-    FF_NETWORK_PER_BUILD: 1
-    HOSTNAME: nodejs.rz-bsd.my.corp
   before_script:
     - apt-get update
     - apt-get install -y curl openssl
@@ -126,19 +120,17 @@ websocket:
 acme:
   image: debian:latest
   services:
-    - name: "$CI_REGISTRY_IMAGE:latest"
+    - name: "${CI_REGISTRY_IMAGE}:latest"
       alias: "nodejs.rz-bsd.my.corp"
   stage: test
   variables:
-    HOSTNAME: nodejs.rz-bsd.my.corp
-    FF_NETWORK_PER_BUILD: 1
     CERTBOT_DIR: certbot
     CERTBOT_ARGS: "--config-dir=${CERTBOT_DIR}/etc/ --work-dir=${CERTBOT_DIR}/work/ --logs-dir=${CERTBOT_DIR}/log/ --server=https://${HOSTNAME}/acme/Sub/"
   before_script:
     - apt-get update
     - apt-get install -y certbot curl
-    - curl http://nodejs.rz-bsd.my.corp/download/Root/ca.crt.pem > root.crt.pem
-    - curl http://nodejs.rz-bsd.my.corp/download/Sub/ca.crt.pem > sub.crt.pem
+    - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
+    - curl http://${HOSTNAME}/download/Sub/ca.crt.pem > sub.crt.pem
   script:
     - export REQUESTS_CA_BUNDLE=$(pwd)/root.crt.pem
     - echo ${REQUESTS_CA_BUNDLE}
