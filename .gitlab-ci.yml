@@ -167,8 +167,8 @@ heroku:
   before_script:
     - dnf install -y skopeo
   script:
-    - "echo 'docker://${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID} -> docker://registry.heroku.com/platynum/web'"
-    - "skopeo copy --src-creds=${CI_REGISTRY_USER}:${CI_REGISTRY_PASSWORD} --dest-creds=_:${HEROKU_AUTH_TOKEN} docker://${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID} docker://registry.heroku.com/platynum/web"
+    - "echo copy from docker://${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID} to docker://registry.heroku.com/platynum/web"
+    - "skopeo copy --src-creds=${CI_REGISTRY_USER}:${CI_REGISTRY_PASSWORD} --dest-creds=_:${HEROKU_AUTH_TOKEN} --format=v2s2 docker://${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID} docker://registry.heroku.com/platynum/web"
   environment:
     name: heroku
     url: https://platynum.herokuapp.com/admin
