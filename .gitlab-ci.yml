@@ -172,6 +172,6 @@ heroku:
     - buildah login -u "_" -p "${HEROKU_AUTH_TOKEN}" "registry.heroku.com"
   script:
     - buildah pull "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-    - buildah tag "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}" "registry.heroku.com/platynum/web:${CI_COMMIT_REF_SLUG/master/latest}"
-    - buildah push "registry.heroku.com/platynum/web:${CI_COMMIT_REF_SLUG/master/latest}"
+    - buildah tag "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}" "registry.heroku.com/platynum/web"
+    - buildah push "registry.heroku.com/platynum/web"
     
