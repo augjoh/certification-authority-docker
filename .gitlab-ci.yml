@@ -36,7 +36,7 @@ downloads:
   image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: "${HOSTNAME}"
+      alias: nodejs.rz-bsd.my.corp
   stage: test
   before_script:
     - apt-get update
@@ -49,7 +49,7 @@ chain:
   image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: "${HOSTNAME}"
+      alias: nodejs.rz-bsd.my.corp
   stage: test
   before_script:
     - apt-get update
@@ -63,7 +63,7 @@ crls:
   image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: "${HOSTNAME}"
+      alias: nodejs.rz-bsd.my.corp
   stage: test
   before_script:
     - apt-get update
@@ -81,7 +81,7 @@ ocsp:
   image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: "${HOSTNAME}"
+      alias: nodejs.rz-bsd.my.corp
   stage: test
   before_script:
     - apt-get update
@@ -96,7 +96,7 @@ https:
   image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: "${HOSTNAME}"
+      alias: nodejs.rz-bsd.my.corp
   stage: test
   before_script:
     - apt-get update
@@ -110,7 +110,7 @@ websocket:
   image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: "${HOSTNAME}"
+      alias: nodejs.rz-bsd.my.corp
   stage: test
   before_script:
     - apt-get update
@@ -124,7 +124,7 @@ acme:
   image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: "${HOSTNAME}"
+      alias: nodejs.rz-bsd.my.corp
   stage: test
   variables:
     CERTBOT_DIR: certbot
