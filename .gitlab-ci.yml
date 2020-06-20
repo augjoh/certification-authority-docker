@@ -166,6 +166,7 @@ heroku:
   stage: release
   variables:
     STORAGE_DRIVER: vfs
+    BUILDAH_FORMAT: docker
   before_script:
     - dnf install -y buildah
     - buildah login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" "${CI_REGISTRY}"
@@ -174,4 +175,3 @@ heroku:
     - buildah pull "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
     - buildah tag "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}" "registry.heroku.com/platynum/web"
     - buildah push "registry.heroku.com/platynum/web"
-    
