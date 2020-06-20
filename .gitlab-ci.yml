@@ -9,7 +9,7 @@ variables:
   HOSTNAME: nodejs.rz-bsd.my.corp
   FF_NETWORK_PER_BUILD: 1
   
-buildah:
+container:
   image: centos:latest
   stage: build
   variables:
@@ -148,7 +148,7 @@ acme:
     paths:
       - ${CERTBOT_DIR}/log/
 
-release:
+gitlab:
   image: centos:latest
   stage: release
   variables:
@@ -160,3 +160,18 @@ release:
     - buildah pull "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
     - buildah tag "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}" "$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_SLUG/master/latest}"
     - buildah push "${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG/master/latest}"
+    
+heroku:
+  image: centos:latest
+  stage: release
+  variables:
+    STORAGE_DRIVER: vfs
+  before_script:
+    - dnf install -y buildah
+    - buildah login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" "${CI_REGISTRY}"
+    - buildah login -u "_" -p "${HEROKU_AUTH_TOKEN}" "registry.heroku.com"
+  script:
+    - buildah pull "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
+    - buildah tag "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}" "registry.heroku.com/platynum/web:${CI_COMMIT_REF_SLUG/master/latest}"
+    - buildah push "registry.heroku.com/platynum/web:${CI_COMMIT_REF_SLUG/master/latest}"
+    
