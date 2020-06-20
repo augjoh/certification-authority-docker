@@ -164,13 +164,10 @@ gitlab:
 heroku:
   image: centos:latest
   stage: release
-  variables:
-    STORAGE_DRIVER: vfs
-    BUILDAH_FORMAT: docker
   before_script:
     - dnf install -y skopeo
   script:
-    - "skopeo copy --src-creds='${CI_REGISTRY_USER}:${CI_REGISTRY_PASSWORD}' '${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}' --dest-creds='_:${HEROKU_AUTH_TOKEN}' 'registry.heroku.com/platynum/web'"
+    - "skopeo copy --src-creds='${CI_REGISTRY_USER}:${CI_REGISTRY_PASSWORD}' 'docker://${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}' --dest-creds='_:${HEROKU_AUTH_TOKEN}' 'docker://registry.heroku.com/platynum/web'"
   environment:
     name: heroku
     url: https://platynum.herokuapp.com/admin
