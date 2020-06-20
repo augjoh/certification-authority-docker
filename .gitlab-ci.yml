@@ -2,6 +2,7 @@ stages:
   - lint
   - build
   - test
+  - release
 
 variables:
   GIT_SUBMODULE_STRATEGY: normal
@@ -9,19 +10,21 @@ variables:
 buildah:
   image: centos:latest
   stage: build
+  variables:
+    STORAGE_DRIVER: vfs
   before_script:
     - dnf install -y buildah
-    - buildah login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+    - buildah login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" "${CI_REGISTRY}"
   script:
-    - buildah bud --storage-driver vfs --isolation chroot -f Dockerfile -t "$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_SLUG/master/latest}-${CI_PIPELINE_ID}" .
-    - buildah push --storage-driver vfs "$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_SLUG/master/latest}-${CI_PIPELINE_ID}"
+    - buildah bud --isolation chroot -f Dockerfile -t "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}" .
+    - buildah push "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
 #  rules:
 #    - changes:
 #        - Dockerfile
 #        - flows/
 
 internal:
-  image: "$CI_REGISTRY_IMAGE:development-${CI_PIPELINE_ID}"
+  image: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
   stage: test
   script:
     - unreached
@@ -30,7 +33,7 @@ internal:
 downloads:
   image: debian:latest
   services:
-    - name: "$CI_REGISTRY_IMAGE:development-${CI_PIPELINE_ID}"
+    - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
       alias: node-red
   stage: test
   before_script:
@@ -43,7 +46,7 @@ downloads:
 chain:
   image: debian:latest
   services:
-    - name: "$CI_REGISTRY_IMAGE:development-${CI_PIPELINE_ID}"
+    - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
       alias: node-red
   stage: test
   before_script:
@@ -57,7 +60,7 @@ chain:
 crls:
   image: debian:latest
   services:
-    - name: "$CI_REGISTRY_IMAGE:development-${CI_PIPELINE_ID}"
+    - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
       alias: nodejs.rz-bsd.my.corp
   stage: test
   variables:
@@ -78,7 +81,7 @@ crls:
 ocsp:
   image: debian:latest
   services:
-    - name: "$CI_REGISTRY_IMAGE:development-${CI_PIPELINE_ID}"
+    - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
       alias: node-red
   stage: test
   before_script:
@@ -93,7 +96,7 @@ ocsp:
 https:
   image: debian:latest
   services:
-    - name: "$CI_REGISTRY_IMAGE:development-${CI_PIPELINE_ID}"
+    - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
       alias: nodejs.rz-bsd.my.corp
   stage: test
   variables:
@@ -109,7 +112,7 @@ https:
 websocket:
   image: debian:latest
   services:
-    - name: "${CI_REGISTRY_IMAGE}:development-${CI_PIPELINE_ID}"
+    - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
       alias: nodejs.rz-bsd.my.corp
   stage: test
   variables:
@@ -126,7 +129,7 @@ websocket:
 acme:
   image: debian:latest
   services:
-    - name: "$CI_REGISTRY_IMAGE:development-${CI_PIPELINE_ID}"
+    - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
       alias: "nodejs.rz-bsd.my.corp"
   stage: test
   variables:
@@ -153,3 +156,15 @@ acme:
     paths:
       - ${CERTBOT_DIR}/log/
 
+release:
+  image: centos:latest
+  stage: release
+  variables:
+    STORAGE_DRIVER: vfs
+  before_script:
+    - dnf install -y buildah
+    - buildah login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" "${CI_REGISTRY}"
+  script:
+    - buildah pull "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
+    - buildah tag "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}" "$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_SLUG/master/latest}"
+    - buildah push "${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG/master/latest}"
