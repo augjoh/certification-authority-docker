@@ -168,10 +168,9 @@ heroku:
     STORAGE_DRIVER: vfs
     BUILDAH_FORMAT: docker
   before_script:
-    - dnf install -y buildah
-    - buildah login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" "${CI_REGISTRY}"
-    - buildah login -u "_" -p "${HEROKU_AUTH_TOKEN}" "registry.heroku.com"
+    - dnf install -y skopeo
   script:
-    - buildah pull "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-    - buildah tag "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}" "registry.heroku.com/platynum/web"
-    - buildah push "registry.heroku.com/platynum/web"
+    - "skopeo copy --src-creds='${CI_REGISTRY_USER}:${CI_REGISTRY_PASSWORD}' '${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}' --dest-creds='_:${HEROKU_AUTH_TOKEN}' 'registry.heroku.com/platynum/web'"
+  environment:
+    name: heroku
+    url: https://platynum.herokuapp.com/admin
