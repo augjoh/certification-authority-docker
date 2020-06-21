@@ -43,11 +43,11 @@ Start the certification authority container and expose HTTP(S) ports:
 
 The user interface of the container is available via TCP port 443.
 Direct your favorite web browser to: `https://localhost/` to use
-the user inerface (UI).
+the user interface (UI).
 
 ## Create PKCS12/PFX container
 
-The user interface (UI) of the CA is protected via Client Certiciate
+The user interface (UI) of the CA is protected via Client Certificate
 Authentication (CCA). The key/certificate is generated automatically
 during startup. To generate a PKCS12/PFX container you have to combine
 the generated files with the following shell commands inside the
@@ -56,6 +56,8 @@ container:
     $ CAFILE=$(mktemp)
     $ cat Admin/ca.crt.pem Sub/ca.crt.pem Root/ca.crt.pem >${CAFILE}
     $ openssl pkcs12 -in Admin/??[a-f1-9]*.crt.pem -inkey Admin/??[a-f1-9]*.priv.key.pem -export -out Admin.pfx -chain -CAfile ${CAFILE} -password pass:password
+
+Import the generated PFX container into your browser.
 
 ## Import PKCS12/PFX container
 
@@ -69,4 +71,10 @@ Import this container into the certificate store:
 Certification Authority (CA) docker source code files are made
 available under GNU Affero General Public License, Version 3.0,
 located in the [LICENSE](LICENSE) file.
+
+# Further information
+
+If you experience any problems, have found a bug, or have questions,
+please visit https://gitlab.com/platynum/certification-authority-docker for
+more information. Contributions are welcome!
 
