@@ -1,5 +1,4 @@
 stages:
-  - lint
   - build
   - test
   - release
@@ -8,7 +7,7 @@ variables:
   GIT_SUBMODULE_STRATEGY: normal
   HOSTNAME: nodejs.rz-bsd.my.corp
   FF_NETWORK_PER_BUILD: 1
-  
+
 container:
   image: centos:latest
   stage: build
@@ -76,7 +75,7 @@ crls:
     - curl http://${HOSTNAME}/download/Sub/crl.pem > sub.crl.pem
     - openssl crl -CAfile sub.crt.pem -noout -text -in sub.crl.pem -verify
     - openssl verify -CAfile root.crt.pem -crl_download -crl_check sub.crt.pem
-    
+
 ocsp:
   image: debian:latest
   services:
@@ -160,7 +159,7 @@ gitlab:
     - buildah pull "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
     - buildah tag "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}" "$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_SLUG/master/latest}"
     - buildah push "${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG/master/latest}"
-    
+
 heroku:
   image: centos:latest
   stage: release
