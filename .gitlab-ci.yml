@@ -172,3 +172,5 @@ heroku:
   environment:
     name: heroku
     url: https://platynum.herokuapp.com/admin
+  only:
+    - master
