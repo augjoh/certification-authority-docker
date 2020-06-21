@@ -171,6 +171,6 @@ heroku:
     - "skopeo copy --src-creds=${CI_REGISTRY_USER}:${CI_REGISTRY_PASSWORD} --dest-creds=_:${HEROKU_AUTH_TOKEN} --format=v2s2 docker://${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID} docker://registry.heroku.com/platynum/web"
   environment:
     name: heroku
-    url: https://platynum.herokuapp.com/admin
+    url: https://acme.platynum.ch/admin
   only:
     - master
