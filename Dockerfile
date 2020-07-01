@@ -3,8 +3,7 @@ FROM nodered/node-red:latest
 COPY settings.js /data/settings.js
 COPY flows/flows_nodejs.json /data/flows.json
 COPY flows/package.json .
-RUN npm install --only=production \
- && sed -i 's/alg:"SHA1withRSA"/alg:this.asn1SignatureAlg.nameAlg/' /usr/src/node-red/node_modules/jsrsasign/lib/jsrsasign.js
+RUN npm install --only=production
 
 USER root
 RUN apk --no-cache add apache2-ssl \
