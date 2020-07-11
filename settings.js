@@ -219,8 +219,8 @@ module.exports = {
         // j5board:require("johnny-five").Board({repl:false})
 	jsrsasign:require('jsrsasign'),
 	fs:require('fs'),
-        fs:require('dns'),
-        fs:require('url'),
+        dns:require('dns'),
+        url:require('url'),
     },
     // `global.keys()` returns a list of all properties set in global context.
     // This allows them to be displayed in the Context Sidebar within the editor.
