@@ -16,7 +16,7 @@ RUN chmod 755 /usr/bin/entrypoint.sh \
               /healthcheck.js
 
 # Overwrite healthcheck from node-red, target apache2 instead of nodejs
-HEALTHCHECK --start-period=30s \
+HEALTHCHECK --start-period=120s \
     CMD sh -c 'NODE_EXTRA_CA_CERTS=/data/Root/ca.crt.pem node /healthcheck.js'
 
 # Configure apache reverse proxy and CCA
