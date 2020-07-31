@@ -17,7 +17,7 @@ environment variables:
    **no default**
  * `logging.console.level`: `NODE_RED_LOGGING_CONSOLE_LEVEL` defaults to
    `info`
- * `httpAdminRoot`: `NODE_RED_HTTP_ADMIN_ROOT` || defaults to `/admin`
+ * `httpAdminRoot`: `NODE_RED_HTTP_ADMIN_ROOT`, defaults to `/admin`
  * `disableEditor`: `NODE_RED_DISABLE_EDITOR`, defaults to `true`
 
 The following settings should not be changed, unless you know what your
