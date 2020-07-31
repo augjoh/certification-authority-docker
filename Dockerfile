@@ -24,17 +24,7 @@ COPY httpd.conf /etc/apache2/httpd.conf
 COPY httpd-ssl.conf /etc/apache2/conf.d/ssl.conf
 RUN rm -f /etc/ssl/apache2/server.{key,pem} \
  && ln -sf /data/Sub/https.crt.pem /etc/ssl/apache2/server.pem \
- && ln -sf /data/Sub/https.priv.key.pem /etc/ssl/apache2/server.key \
- && ln -sf /data/Sub/ca.crt.pem /etc/ssl/apache2/server-ca.pem \
- && SSLCACertificatePath=$(awk '/^SSLCACertificatePath/ { print $2 }' /etc/apache2/conf.d/ssl.conf) \
- && mkdir -p "$SSLCACertificatePath" \
- && ln -sf /data/Root/ca.crt.pem "$SSLCACertificatePath/Root.ca.crt" \
- && ln -sf /data/Admin/ca.crt.pem "$SSLCACertificatePath/Admin.ca.crt" \
- && SSLCARevocationPath=$(awk '/^SSLCARevocationPath/ { print $2 }' /etc/apache2/conf.d/ssl.conf) \
- && mkdir -p "$SSLCARevocationPath" \
- && ln -sf /data/Root/crl.pem "$SSLCARevocationPath/Root.crl" \
- && ln -sf /data/Sub/crl.pem "$SSLCARevocationPath/Sub.crl" \
- && ln -sf /data/Admin/crl.pem "$SSLCARevocationPath/Admin.crl"
+ && ln -sf /data/Sub/https.priv.key.pem /etc/ssl/apache2/server.key
 
 EXPOSE 80 3180 443
 

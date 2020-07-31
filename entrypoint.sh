@@ -1,15 +1,43 @@
 #!/bin/sh
 
+DATADIR=/data
+
 # Change workdir to /data so that files (ie. certificates) are going to be
 # created there
-cd /data
+cd "${DATADIR}" || exit 1
 
 apache2() {
-    while [ ! -f Sub/https.crt.pem ] && [ ! -f Admin/ca.crt.pem ]; do
+    APACHE2_SSL_CONF=/etc/apache2/conf.d/ssl.conf
+
+    while [ ! -f "${DATADIR}/Sub/https.crt.pem" ]; do
         sleep 3
     done
-    openssl rehash $(awk '/^SSLCACertificatePath/ { print $2 }')
-    openssl rehash $(awk '/^SSLCARevocationPath/ { print $2 }')
+
+    SSLCertificateChainFile=$(awk '/^SSLCertificateChainFile/ { print $2 }' "${APACHE2_SSL_CONF}")
+    ln -sf "$(openssl x509 -in "${DATADIR}/Sub/https.crt.pem" -noout -text | awk '/CA Issuers/ { print $4 }' | sed 's#.*\(Sub/[a-f0-9]\{64\}\).crt.cer#\1/ca.crt.pem#')" "${SSLCertificateChainFile}"
+
+    while ! find "${DATADIR}/Admin" -name ca.crt.pem 2>/dev/null; do
+        sleep 3
+    done
+
+    SSLCACertificatePath=$(awk '/^SSLCACertificatePath/ { print $2 }' "${APACHE2_SSL_CONF}")
+    if [ ! -d "${SSLCACertificatePath}" ]; then
+        mkdir -p "${SSLCACertificatePath}"
+    fi
+    for crt in $(find "${DATADIR}/Root" -name ca.crt.pem); do
+	ln -sf "${crt}" "$(mktemp "${SSLCACertificatePath}/ca.crt.pem.XXXXXX")"
+    done
+    openssl rehash "${SSLCACertificatePath}"
+
+    SSLCARevocationPath=$(awk '/^SSLCARevocationPath/ { print $2 }' "${APACHE2_SSL_CONF}")
+    if [ ! -d "${SSLCARevocationPath}" ]; then
+        mkdir -p "${SSLCARevocationPath}"
+    fi
+    for crl in $(find "${DATADIR}" -name crl.pem); do
+        ln -sf "${crl}" "$(mktemp "${SSLCARevocationPath}/crl.pem.XXXXXX")"
+    done
+    openssl rehash "${SSLCARevocationPath}"
+
     /usr/sbin/httpd -k start
     sleep 5
     tail /var/log/apache2/*.log
