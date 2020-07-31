@@ -9,17 +9,15 @@ on:
     - cron: '0 19 * * *'
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v2
     - name: Update submodules
       run: git clone https://gitlab.com/platynum/certification-authority.git flows
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag platynum/certification:$(date +%s)
+      run: docker build . --file Dockerfile --tag platynum/certification-authority:$(date +%s)
     - name: Push to Docker Hub
       uses: docker/build-push-action@v1
       with:
@@ -27,3 +25,50 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
         repository: platynum/certification-authority
         tag_with_ref: true
+  buildx:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Update submodules
+        run: git clone https://gitlab.com/platynum/certification-authority.git flows
+      - name: Set up Docker Buildx
+        uses: crazy-max/ghaction-docker-buildx@v3
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        id: cache
+        with:
+          path: .buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+      - name: Docker Buildx (build)
+        run: |
+          docker buildx build \
+            --cache-from "type=local,src=.buildx-cache" \
+            --cache-to "type=local,dest=.buildx-cache" \
+            --platform linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64 \
+            --output "type=image,push=false" \
+            --tag platynum/certification-authority:latest \
+            --file Dockerfile .
+      - name: Docker Login
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          echo "${DOCKER_PASSWORD}" | docker login --username "${DOCKER_USERNAME}" --password-stdin
+      - name: Docker Buildx (push)
+        run: |
+          docker buildx build \
+            --cache-from "type=local,src=.buildx-cache" \
+            --platform linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64 \
+            --output "type=image,push=true" \
+            --tag platynum/certification-authority:latest \
+            --file Dockerfile .
+      - name: Docker Check Manifest
+        run: |
+          docker run --rm mplatform/mquery platynum/certification-authority:latest
+      - name: Clear
+        if: always()
+        run: |
+          rm -f ${HOME}/.docker/config.json
