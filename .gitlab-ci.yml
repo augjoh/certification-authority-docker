@@ -20,9 +20,9 @@ container:
     - dnf install -y buildah
     - buildah login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" "${CI_REGISTRY}"
   script:
-    - buildah bud --isolation chroot -f Dockerfile -t "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}" -t "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}" .
+    - buildah bud --isolation chroot -f Dockerfile -t "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}" -t "${CI_REGISTRY_IMAGE}/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}" .
     - buildah push "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-    - buildah push "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}"
+    - buildah push "${CI_REGISTRY_IMAGE}/${CI_COMMIT_REF_SLUG}:${CI_COMMIT_SHA}"
 #  rules:
 #    - changes:
 #        - Dockerfile
