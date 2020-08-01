@@ -8,6 +8,9 @@ variables:
   HOSTNAME: nodejs.rz-bsd.my.corp
   FF_NETWORK_PER_BUILD: 1
 
+include:
+  - template: Container-Scanning.gitlab-ci.yml
+
 container:
   image: centos:latest
   stage: build
@@ -23,6 +26,10 @@ container:
 #    - changes:
 #        - Dockerfile
 #        - flows/
+
+container_scanning:
+  variables:
+    CI_APPLICATION_TAG: $CI_PIPELINE_ID
 
 internal:
   image: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
