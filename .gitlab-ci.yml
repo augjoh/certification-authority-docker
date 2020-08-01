@@ -72,11 +72,11 @@ crls:
     - sleep 60
   script:
     - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
-    - curl http://${HOSTNAME}/download/Root/crl.pem > root.crl.pem
-    - openssl crl -CAfile root.crt.pem -noout -text -in root.crl.pem -verify
     - curl http://${HOSTNAME}/download/Sub/ca.crt.pem > sub.crt.pem
-    - curl http://${HOSTNAME}/download/Sub/crl.pem > sub.crl.pem
-    - openssl crl -CAfile sub.crt.pem -noout -text -in sub.crl.pem -verify
+    - CRL_URI=$(openssl x509 -in sub.crt.pem -noout -text | grep -A3 "X509v3 CRL Distribution Points" | tail -n1 | sed 's/URI://')
+    - echo CRL_URI=${CRL_URI}
+    - curl ${CRL_URI} > root.crl.pem
+    - openssl crl -CAfile root.crt.pem -noout -text -in root.crl.pem -verify
     - openssl verify -CAfile root.crt.pem -crl_download -crl_check sub.crt.pem
 
 ocsp:
