@@ -82,8 +82,8 @@ crls:
     - curl http://${HOSTNAME}/download/Sub/ca.crt.pem > sub.crt.pem
     - CRL_URI=$(openssl x509 -in sub.crt.pem -noout -text | grep -A3 "X509v3 CRL Distribution Points" | tail -n1 | sed 's/URI://')
     - echo CRL_URI=${CRL_URI}
-    - curl ${CRL_URI} > root.crl.pem
-    - openssl crl -CAfile root.crt.pem -noout -text -in root.crl.pem -verify
+    - curl ${CRL_URI} > root.crl.der
+    - openssl crl -CAfile root.crt.pem -noout -text -inform DER -in root.crl.der -verify
     - openssl verify -CAfile root.crt.pem -crl_download -crl_check sub.crt.pem
 
 ocsp:
