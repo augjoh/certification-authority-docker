@@ -94,9 +94,10 @@ ocsp:
     - sleep 60
     - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
     - curl http://${HOSTNAME}/download/Sub/ca.crt.pem > sub.crt.pem
-    - curl http://${HOSTNAME}/download/Sub/ocsp.crt.pem > ocsp.crt.pem
+    - openssl s_client -showcerts -connect ${HOSTNAME}:443 < /dev/null | openssl x509 > https.crt.pem
+    - openssl x509 -in https.crt.pem -noout -text
   script:
-    - openssl ocsp -CAfile root.crt.pem -issuer sub.crt.pem -trust_other -cert ocsp.crt.pem -url $(openssl x509 -in ocsp.crt.pem -noout -ocsp_uri)
+    - openssl ocsp -CAfile root.crt.pem -issuer sub.crt.pem -trust_other -cert https.crt.pem -url $(openssl x509 -in https.crt.pem -noout -ocsp_uri)
 
 https:
   image: debian:latest
