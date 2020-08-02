@@ -14,9 +14,9 @@ apache2() {
     done
 
     SSLCertificateChainFile=$(awk '/^SSLCertificateChainFile/ { print $2 }' "${APACHE2_SSL_CONF}")
-    ln -sf "${DATADIR}/$(openssl x509 -in "${DATADIR}/Sub/https.crt.pem" -noout -text | awk '/CA Issuers/ { print $4 }' | sed 's#.*\(Sub/[a-f0-9]\{64\}\).crt.cer#\1/ca.crt.pem#')" "${SSLCertificateChainFile}"
+    ln -sf "${DATADIR}/$(openssl x509 -in "${DATADIR}/Sub/https.crt.pem" -noout -text | awk '/CA Issuers/ { print $4 }' | sed 's#.*\(Sub/[a-f0-9]\{64\}\)/ca.crt.cer#\1/ca.crt.pem#')" "${SSLCertificateChainFile}"
 
-    while ! find "${DATADIR}/Admin" -name ca.crt.pem 2>/dev/null; do
+    while ! find "${DATADIR}/Admin" -name ca.crt.pem >/dev/null 2>&1; do
         sleep 3
     done
 
