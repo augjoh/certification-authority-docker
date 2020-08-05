@@ -2,6 +2,9 @@
 var proto = require('https');
 var tls = require('tls');
 
+//process.env['NODE_EXTRA_CA_CERTS'] = '/data/Root/[a-f0-9]\{64\}/ca.crt.pem';
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
+
 var hostname = process.env['HOSTNAME'];
 var options = {
     host: 'localhost',
