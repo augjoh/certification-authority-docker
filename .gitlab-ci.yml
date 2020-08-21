@@ -129,6 +129,26 @@ websocket:
     - "echo 'I am groot' | curl --cacert root.crt.pem --location --include --no-buffer --header 'Connection: Upgrade' --header 'Upgrade: websocket' --header 'Host: ${HOSTNAME}' --header 'Origin: ${HOSTNAME}' --header 'Sec-WebSocket-Key: $(openssl rand 16 | openssl enc -base64)' --header 'Sec-WebSocket-Version: 13' https://${HOSTNAME}/admin/comms"
   when: manual
 
+tsa:
+  image: node:12
+  services:
+    - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
+      alias: nodejs.rz-bsd.my.corp
+  stage: test
+  before_script:
+    - apt-get -q update
+    - apt-get -q install -y openssl curl
+    - sleep 120
+    - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
+  script:
+    - dd if=/dev/urandom of=data.bin bs=1 count=512
+    - openssl ts -query -data data.bin -sha256 -cert -out tsq.der
+    - openssl ts -query -in tsq.der -text
+    - curl -H "Content-Type: application/timestamp-query" --data-bin '@tsq.der' http://${HOSTNAME}/tsa/Root > tsr.der
+    - openssl asn1parse -in tsr.der -inform DER -i
+    - openssl ts -reply -in tsr.der -text
+    - openssl ts -verify -in tsr.der -queryfile tsq.der -CAfile root.ca.crt
+
 acme:
   image: debian:latest
   services:
