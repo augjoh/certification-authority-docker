@@ -175,12 +175,15 @@ module.exports = {
     // The following property can be used to add a custom middleware function
     // in front of all http in nodes. This allows custom authentication to be
     // applied to all http in nodes, or any other sort of common request processing.
-    //httpNodeMiddleware: function(req,res,next) {
-    //    // Handle/reject the request, or pass it on to the http in node by calling next();
-    //    // Optionally skip our rawBodyParser by setting this to true;
-    //    //req.skipRawBodyParser = true;
-    //    next();
-    //},
+    httpNodeMiddleware: function(req,res,next) {
+        switch (req.get('content-type')) {
+          case 'application/timestamp-query':
+          case 'application/ocsp-request':
+            req.headers['content-type'] = 'application/octet-stream';
+            break;
+	}
+        next();
+    },
 
     // The following property can be used to pass custom options to the Express.js
     // server used by Node-RED. For a full list of available options, refer
