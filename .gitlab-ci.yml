@@ -150,7 +150,7 @@ tsa:
     - "curl -H 'Content-Type: application/timestamp-query' --data-bin '@tsq.der' http://${HOSTNAME}/tsa/Root > tsr.der"
     - openssl asn1parse -in tsr.der -inform DER -i
     - openssl ts -reply -in tsr.der -text
-    - openssl ts -verify -in tsr.der -queryfile tsq.der -CAfile root.ca.crt
+    - openssl ts -verify -in tsr.der -queryfile tsq.der -CAfile root.crt.pem
 
 acme:
   image: debian:latest
