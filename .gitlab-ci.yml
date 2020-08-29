@@ -151,7 +151,7 @@ tsa:
     - openssl asn1parse -in tsr.der -inform DER -i
     - openssl ts -reply -in tsr.der -text
     - openssl ts -reply -in tsr.der -token_out -out tsr.cms.der
-    - openssl cms -in tsr.cms.der -inform DER -cmsout -verify -CAfile root.crt.pem
+    - openssl cms -in tsr.cms.der -inform DER -verify -purpose any -CAfile root.crt.pem >/dev/null
     - openssl ts -verify -in tsr.der -queryfile tsq.der -CAfile root.crt.pem || true
 
 acme:
