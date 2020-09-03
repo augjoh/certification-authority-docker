@@ -8,10 +8,10 @@ Authority (https://gitlab.com/platynum/certification-authority).
 == Downloading the image
 
 [source,bash]
-````
+----
 $ IMAGE=registry.gitlab.com/platynum/certification-authority-docker:latest
 $ docker pull ${IMAGE}
-````
+----
 
 === Non x86-64 images
 
@@ -56,10 +56,10 @@ contains additional information about the base image for this container.
 Start the certification authority container and expose HTTP(S) ports:
 
 [source,bash]
-````
+----
 $ IMAGE=registry.gitlab.com/platynum/certification-authority-docker:latest
 $ docker run -e NODE_RED_CREDENTIAL_SECRET=password -p 80:80 -p 443:443 $IMAGE
-````
+----
 
 == Access the container
 
@@ -76,11 +76,11 @@ the generated files with the following shell commands inside the
 container:
 
 [source,bash]
-````
+----
 $ CAFILE=$(mktemp)
 $ cat Admin/ca.crt.pem Sub/ca.crt.pem Root/ca.crt.pem >${CAFILE}
 $ openssl pkcs12 -in Admin/??[a-f1-9]*.crt.pem -inkey Admin/??[a-f1-9]*.priv.key.pem -export -out Admin.pfx -chain -CAfile ${CAFILE} -password pass:password
-````
+----
 
 Import the generated PFX container into your browser.
 
@@ -90,10 +90,10 @@ Import this container into the certificate store:
 
 .Windows Powershell
 [source,powershell]
-````
+----
 PS C:\>$mypwd = Get-Credential -UserName 'Enter password below' -Message 'Enter password below'
 PS C:\>Import-PfxCertificate -FilePath C:\Admin.pfx -CertStoreLocation Cert:\CurrentUser\My -Password $mypwd.Password
-````
+----
 
 = License
 
