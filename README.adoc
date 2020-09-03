@@ -1,6 +1,7 @@
 = Certification Authority (CA) - Docker
 :experimental: true
 :source-highlighter: rouge
+:icons: font
 
 This projects builds and provides a container for the Certification
 Authority (https://gitlab.com/platynum/certification-authority).
@@ -20,7 +21,7 @@ There are unofficial docker images on
 which run on BeagleBone, Raspberry PI, and other ARM- or i686-based
 hardware. These images are rebuilt daily.
 
-WARNING: These images are not tested in any way, currently.
+WARNING: The unofficial images are not tested in any way, currently.
 
 == Configuration
 
