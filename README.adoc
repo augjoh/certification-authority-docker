@@ -99,7 +99,7 @@ PS C:\>Import-PfxCertificate -FilePath C:\Admin.pfx -CertStoreLocation Cert:\Cur
 
 Certification Authority (CA) docker source code files are made
 available under GNU Affero General Public License, Version 3.0,
-located in the [LICENSE](LICENSE) file.
+located in the link:LICENSE[LICENSE] file.
 
 = Further information
 
