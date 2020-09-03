@@ -43,7 +43,7 @@ downloads:
   before_script:
     - apt-get -q update
     - apt-get -q install -y curl
-    - sleep 60
+    - sleep 120
   script:
     - curl -v http://${HOSTNAME}/
     - curl -v http://${HOSTNAME}/download/Root/ca.crt.pem
@@ -57,7 +57,7 @@ chain:
   before_script:
     - apt-get -q update
     - apt-get -q install -y curl openssl
-    - sleep 60
+    - sleep 120
   script:
     - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
     - curl http://${HOSTNAME}/download/Sub/ca.crt.pem > sub.crt.pem
@@ -72,7 +72,7 @@ crls:
   before_script:
     - apt-get -q update
     - apt-get -q install -y curl openssl
-    - sleep 60
+    - sleep 120
   script:
     - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
     - curl http://${HOSTNAME}/download/Sub/ca.crt.pem > sub.crt.pem
@@ -108,7 +108,7 @@ https:
   before_script:
     - apt-get -q update
     - apt-get -q install -y curl openssl
-    - sleep 60
+    - sleep 120
     - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
   script:
     - openssl s_client -showcerts -CAfile root.crt.pem -connect ${HOSTNAME}:443 </dev/null
@@ -123,36 +123,27 @@ websocket:
   before_script:
     - apt-get -q update
     - apt-get -q install -y curl openssl
-    - sleep 60
+    - sleep 120
     - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
   script:
     - "echo 'I am groot' | curl --cacert root.crt.pem --location --include --no-buffer --header 'Connection: Upgrade' --header 'Upgrade: websocket' --header 'Host: ${HOSTNAME}' --header 'Origin: ${HOSTNAME}' --header 'Sec-WebSocket-Key: $(openssl rand 16 | openssl enc -base64)' --header 'Sec-WebSocket-Version: 13' https://${HOSTNAME}/admin/comms"
   when: manual
 
 tsa:
-  image: node:12
+  image: archlinux:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
       alias: nodejs.rz-bsd.my.corp
   stage: test
   before_script:
-    - apt-get -q update
-    - apt-get -q install -y openssl curl
+    - pacman --noconfirm -Syu
+    - pacman --noconfirm -Sy openssl curl nodejs npm
     - sleep 120
-    - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
-    - openssl x509 -in root.crt.pem -text
-    - curl http://${HOSTNAME}/download/Root/tsa.crt.pem > tsa.crt.pem
-    - openssl x509 -in tsa.crt.pem -text
   script:
     - dd if=/dev/urandom of=data.bin bs=1 count=512
-    - openssl ts -query -data data.bin -sha1 -cert -out tsq.der
-    - openssl ts -query -in tsq.der -text
+    - openssl ts -query -data data.bin -sha256 -cert -out tsq.der
     - "curl -H 'Content-Type: application/timestamp-query' --data-bin '@tsq.der' http://${HOSTNAME}/tsa/Root > tsr.der"
-    - openssl asn1parse -in tsr.der -inform DER -i
-    - openssl ts -reply -in tsr.der -text
-    - openssl ts -reply -in tsr.der -token_out -out tsr.cms.der
-    - openssl cms -in tsr.cms.der -inform DER -verify -purpose any -CAfile root.crt.pem >/dev/null
-    - openssl ts -verify -in tsr.der -queryfile tsq.der -CAfile root.crt.pem || true
+    - openssl ts -verify -in tsr.der -queryfile tsq.der -CAfile Root/*/ca.crt.pem
 
 acme:
   image: debian:latest
@@ -166,7 +157,7 @@ acme:
   before_script:
     - apt-get -q update
     - apt-get -q install -y certbot curl
-    - sleep 60
+    - sleep 120
     - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
     - curl http://${HOSTNAME}/download/Sub/ca.crt.pem > sub.crt.pem
   script:
