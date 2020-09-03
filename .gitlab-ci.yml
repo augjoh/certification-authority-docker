@@ -139,11 +139,12 @@ tsa:
     - pacman --noconfirm -Syu
     - pacman --noconfirm -Sy openssl curl nodejs npm
     - sleep 120
+    - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
   script:
     - dd if=/dev/urandom of=data.bin bs=1 count=512
     - openssl ts -query -data data.bin -sha256 -cert -out tsq.der
     - "curl -H 'Content-Type: application/timestamp-query' --data-bin '@tsq.der' http://${HOSTNAME}/tsa/Root > tsr.der"
-    - openssl ts -verify -in tsr.der -queryfile tsq.der -CAfile Root/*/ca.crt.pem
+    - openssl ts -verify -in tsr.der -queryfile tsq.der -CAfile root.crt.pem
 
 acme:
   image: debian:latest
