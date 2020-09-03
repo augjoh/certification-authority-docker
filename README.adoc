@@ -1,9 +1,28 @@
-# Certification Authority (CA) - Docker
+= Certification Authority (CA) - Docker
+:experimental: true
+:source-highlighter: rouge
 
 This projects builds and provides a container for the Certification
 Authority (https://gitlab.com/platynum/certification-authority).
 
-## Configuration
+== Downloading the image
+
+[source,bash]
+````
+$ IMAGE=registry.gitlab.com/platynum/certification-authority-docker:latest
+$ docker pull ${IMAGE}
+````
+
+=== Non x86-64 images
+
+There are unofficial docker images on
+`https://hub.docker.com/r/platynum/certification-authority`
+which run on BeagleBone, Raspberry PI, and other ARM- or i686-based
+hardware. These images are rebuilt daily.
+
+WARNING: These images are not tested in any way, currently.
+
+== Configuration
 
 Consult the [documentation of the node-red](https://nodered.org/docs/user-guide/runtime/configuration)
 for all possible configuration options. Some of them have been mapped
@@ -32,20 +51,23 @@ correctly!
 The [page of node-red's docker container](https://nodered.org/docs/getting-started/docker)
 contains additional information about the base image for this container.
 
-## Start container
+== Start container
 
 Start the certification authority container and expose HTTP(S) ports:
 
-    $ IMAGE=registry.gitlab.com/platynum/certification-authority-docker:latest
-    $ docker run -e NODE_RED_CREDENTIAL_SECRET=password -p 80:80 -p 443:443 $IMAGE
+[source,bash]
+````
+$ IMAGE=registry.gitlab.com/platynum/certification-authority-docker:latest
+$ docker run -e NODE_RED_CREDENTIAL_SECRET=password -p 80:80 -p 443:443 $IMAGE
+````
 
-## Access the container
+== Access the container
 
 The user interface of the container is available via TCP port 443.
 Direct your favorite web browser to: `https://localhost/` to use
 the user interface (UI).
 
-## Create PKCS12/PFX container
+== Create PKCS12/PFX container
 
 The user interface (UI) of the CA is protected via Client Certificate
 Authentication (CCA). The key/certificate is generated automatically
@@ -53,9 +75,12 @@ during startup. To generate a PKCS12/PFX container you have to combine
 the generated files with the following shell commands inside the
 container:
 
-    $ CAFILE=$(mktemp)
-    $ cat Admin/ca.crt.pem Sub/ca.crt.pem Root/ca.crt.pem >${CAFILE}
-    $ openssl pkcs12 -in Admin/??[a-f1-9]*.crt.pem -inkey Admin/??[a-f1-9]*.priv.key.pem -export -out Admin.pfx -chain -CAfile ${CAFILE} -password pass:password
+[source,bash]
+````
+$ CAFILE=$(mktemp)
+$ cat Admin/ca.crt.pem Sub/ca.crt.pem Root/ca.crt.pem >${CAFILE}
+$ openssl pkcs12 -in Admin/??[a-f1-9]*.crt.pem -inkey Admin/??[a-f1-9]*.priv.key.pem -export -out Admin.pfx -chain -CAfile ${CAFILE} -password pass:password
+````
 
 Import the generated PFX container into your browser.
 
@@ -63,16 +88,20 @@ Import the generated PFX container into your browser.
 
 Import this container into the certificate store:
 
-    PS C:\>$mypwd = Get-Credential -UserName 'Enter password below' -Message 'Enter password below'
-    PS C:\>Import-PfxCertificate -FilePath C:\Admin.pfx -CertStoreLocation Cert:\CurrentUser\My -Password $mypwd.Password
+.Windows Powershell
+[source,powershell]
+````
+PS C:\>$mypwd = Get-Credential -UserName 'Enter password below' -Message 'Enter password below'
+PS C:\>Import-PfxCertificate -FilePath C:\Admin.pfx -CertStoreLocation Cert:\CurrentUser\My -Password $mypwd.Password
+````
 
-# License
+= License
 
 Certification Authority (CA) docker source code files are made
 available under GNU Affero General Public License, Version 3.0,
 located in the [LICENSE](LICENSE) file.
 
-# Further information
+= Further information
 
 If you experience any problems, have found a bug, or have questions,
 please visit https://gitlab.com/platynum/certification-authority-docker for
