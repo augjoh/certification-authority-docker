@@ -1,4 +1,4 @@
-FROM nodered/node-red:latest
+FROM nodered/node-red:latest-minimal
 
 COPY settings.js /data/settings.js
 COPY flows/flows.json /data/flows.json
