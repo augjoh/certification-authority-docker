@@ -3,7 +3,7 @@ FROM nodered/node-red:latest-minimal
 COPY settings.js /data/settings.js
 COPY flows/flows.json /data/flows.json
 COPY flows/package.json .
-RUN npm install --only=production
+RUN npm ci --production
 
 USER root
 RUN apk --no-cache add apache2-ssl \
