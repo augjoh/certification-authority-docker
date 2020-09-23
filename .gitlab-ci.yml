@@ -99,6 +99,21 @@ ocsp:
   script:
     - openssl ocsp -CAfile root.crt.pem -issuer sub.crt.pem -trust_other -cert https.crt.pem -url $(openssl x509 -in https.crt.pem -noout -ocsp_uri)
 
+metrics:
+  image: debian:latest
+  services:
+    - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
+      alias: nodejs.rz-bsd.my.corp
+  stage: test
+  before_script:
+    - apt-get update
+    - apt-get install -y curl prometheus
+    - sleep 120
+    - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
+  script:
+    - curl -vv -CAfile root.crt.pem -o metrics.prom https://${HOSTNAME}/metrics
+    - cat metrics.prom | promtool check metrics
+
 https:
   image: debian:latest
   services:
