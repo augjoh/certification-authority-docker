@@ -2,7 +2,7 @@ FROM nodered/node-red:latest-minimal
 
 COPY settings.js /data/settings.js
 COPY flows/flows.json /data/flows.json
-COPY flows/package.json flows/package-lock.json /data/
+COPY flows/package.json flows/package-lock.json .
 RUN npm ci --production
 
 USER root
