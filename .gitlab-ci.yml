@@ -111,7 +111,7 @@ metrics:
     - sleep 120
     - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
   script:
-    - curl -vv -CAfile root.crt.pem -o metrics.prom https://${HOSTNAME}/metrics
+    - curl -vv --cacert root.crt.pem -o metrics.prom https://${HOSTNAME}/metrics
     - cat metrics.prom | promtool check metrics
 
 https:
