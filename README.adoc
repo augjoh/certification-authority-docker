@@ -4,13 +4,13 @@
 :icons: font
 
 This projects builds and provides a container for the Certification
-Authority (https://gitlab.com/platynum/certification-authority).
+Authority (https://gitlab.com/platynum/certification-authority/flows).
 
 == Downloading the image
 
 [source,bash]
 ----
-$ IMAGE=registry.gitlab.com/platynum/certification-authority-docker:latest
+$ IMAGE=registry.gitlab.com/platynum/certification-authority/container:latest
 $ docker pull ${IMAGE}
 ----
 
@@ -105,6 +105,6 @@ located in the link:LICENSE[LICENSE] file.
 = Further information
 
 If you experience any problems, have found a bug, or have questions,
-please visit https://gitlab.com/platynum/certification-authority-docker for
-more information. Contributions are welcome!
+please visit https://gitlab.com/platynum/certification-authority-docker/container
+for more information. Contributions are welcome!
 
