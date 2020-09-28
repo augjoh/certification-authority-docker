@@ -1,4 +1,4 @@
 [submodule "flows"]
 	path = flows
-	url = ../certification-authority.git
+	url = ../flows.git
 	branch = .
