@@ -58,7 +58,7 @@ Start the certification authority container and expose HTTP(S) ports:
 
 [source,bash]
 ----
-$ IMAGE=registry.gitlab.com/platynum/certification-authority-docker:latest
+$ IMAGE=registry.gitlab.com/platynum/certification-authority/container:latest
 $ docker run -e NODE_RED_CREDENTIAL_SECRET=password -p 80:80 -p 443:443 $IMAGE
 ----
 
@@ -79,7 +79,7 @@ container:
 [source,bash]
 ----
 $ CAFILE=$(mktemp)
-$ cat Admin/ca.crt.pem Sub/ca.crt.pem Root/ca.crt.pem >${CAFILE}
+$ cat Admin/*/ca.crt.pem Sub/*/ca.crt.pem Root/*/ca.crt.pem >${CAFILE}
 $ openssl pkcs12 -in Admin/??[a-f1-9]*.crt.pem -inkey Admin/??[a-f1-9]*.priv.key.pem -export -out Admin.pfx -chain -CAfile ${CAFILE} -password pass:password
 ----
 
