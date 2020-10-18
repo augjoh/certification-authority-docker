@@ -1,0 +1,39 @@
+= Secure HyperText transport protocol (HTTPS)
+
+The container provides Secure HyperText Transfer Protocol footnote:[
+https://tools.ietf.org/html/rfc2818] via an Apache HTTP Server reverse proxy
+in front of Node-RED. This encryption layer is intended to protect the
+communication from the end-user to the certification authority. Currently
+Node-RED provides the following threee interfaces which depend on this:
+
+- Automatic Certificate Management Environment (ACME) (https://${HOSTNAME}/acme/Sub/),
+- the user interface (https://${HOSTNAME}/ui), and
+- the Node-RED editor interface (https://${HOSTNAME}/admin).
+
+IMPORTANT: The editor interface is disabled by default. You'll have to
+configure the environment variable `NODE_RED_DISABLE_EDITOR=false` to
+access the editor.
+
+== Automatic Certificate Mangaement Environment
+
+Automatic Certificate Mangaement Environment (ACME) footnote:[https://tools.ietf.org/html/rfc8555]
+functions are accomplished by the client sending a sequence of HTTPS requests
+to the server, carrying the messages using the JavaScript Object Notation
+(JSON) Data Interface format footnote:[https://tools.ietf.org/html/rfc7159]. Use
+of HTTPS is required by the protocol specification.
+
+== User interface
+
+The user interface is protected via client certificate authentication (CCA).
+This is part of The Transport Layer Security (TLS) Protocol Version 1.2
+footnote:[https://tools.ietf.org/html/rfc8446]. Certificates to access the
+User Interface (UI) are issued from the `Admin` certification authority.
+A sample
+
+== Editor interface
+
+The Node-RED editor is used to configure the various flows used to
+orchetrate the whole certification authority. It is intended to be enabled
+for development, only.
+
+

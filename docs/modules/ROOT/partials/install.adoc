@@ -1,0 +1,92 @@
+= Installation
+
+== Pre-requisites
+
+To install the container you'll need a container runtime. This can
+be `docker(1)`, `podman(1)`, or a similar container runtime. In the
+remainder of this document it is expected, that you're familiar with
+docker.
+
+=== Docker
+
+To install the docker container runtime on your machine, choose among
+of the following commands according to your operating system /
+distribution.
+
+.Debian/Ubuntu
+[source,bash]
+----
+$ sudo apt install docker-io
+----
+
+.OpenSuSE/SLES
+[source,bash]
+----
+$ sudo zypper install docker
+----
+
+.Manjaro/Archlinux
+[source,bash]
+----
+$ sudo pacman -S docker
+----
+
+After installation you might have to start the `docker(8)` daemon:
+[source,bash]
+----
+$ sudo systemctl start docker
+$ sudo systemctl enable docker
+----
+
+=== Podman
+
+On RedHat / CentOS there is no docker package available by default.
+You can use `podman(1)` here to run the container. At first install
+the container runtime:
+
+.RedHat / CentOS
+[source,bash]
+----
+$ sudo dnf install podman
+----
+
+There is no daemon to be started, so you're done, already.
+
+== Downloading the image
+
+After you have installed the docker runtime, you'll be able to download
+the container of this project.
+
+At first choose the image you want to download:
+[source,bash]
+----
+$ IMAGE=registry.gitlab.com/platynum/certification-authority/container:latest
+----
+
+And download it with `docker(1)`: footnote:[https://docs.docker.com/engine/reference/commandline/image_pull/]
+
+TIP: Your user might need to be part of the `docker` group to use the `docker(1)` command line utility!
+
+.Docker
+[source,bash]
+----
+$ docker image pull ${IMAGE}
+----
+
+If you're using `podman(1)` as your container runtime, you can use `podman-pull(1)`. footnote:[http://docs.podman.io/en/latest/markdown/podman-pull.1.html]
+
+.Podman
+[source,bash]
+----
+$ podman pull ${IMAGE}
+----
+
+=== Non x86-64 images
+
+There are unofficial docker images on
+`https://hub.docker.com/r/platynum/certification-authority`
+which run on BeagleBone, Raspberry PI, and other ARM- or i686-based
+hardware. These images are rebuilt daily.
+
+WARNING: The unofficial images are not tested in any way, currently.
+
