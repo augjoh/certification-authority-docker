@@ -224,6 +224,7 @@ module.exports = {
 	fs:require('fs'),
         dns:require('dns'),
         url:require('url'),
+        rocatest:require('@platynum/rocatest'),
     },
     // `global.keys()` returns a list of all properties set in global context.
     // This allows them to be displayed in the Context Sidebar within the editor.
