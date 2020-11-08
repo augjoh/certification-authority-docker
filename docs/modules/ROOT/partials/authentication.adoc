@@ -41,8 +41,6 @@ $ openssl pkcs12 -in    ??[a-f0-9]*/??[a-f0-9]*.crt.pem \
                  -export -out Admin.pfx -chain -CAfile ${CAFILE} -password pass:##password##
 $ rm ${CAFILE}
 ----
---
-====
 
 Download the PKCS12/PFX file from the certification authority container onto
 your host system next.
