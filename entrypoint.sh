@@ -23,20 +23,26 @@ apache2() {
     SSLCACertificatePath=$(awk '/^SSLCACertificatePath/ { print $2 }' "${APACHE2_SSL_CONF}")
     if [ ! -d "${SSLCACertificatePath}" ]; then
         mkdir -p "${SSLCACertificatePath}"
+    else
+        rm "${SSLCACertificatePath}/"*
     fi
-    for crt in $(find "${DATADIR}/Root" -name ca.crt.pem); do
-	ln -sf "${crt}" "$(mktemp "${SSLCACertificatePath}/ca.crt.pem.XXXXXX")"
+    for crt in $(find "${DATADIR}/Root" "${DATADIR}/Admin" -name ca.crt.pem); do
+        if [ ! -f "${crt}.revoked" ]; then
+            hash="$(openssl x509 -noout -in "${crt}" -hash)"
+            ln -s "${crt}" "${SSLCACertificatePath}/${hash}.0"
+        fi
     done
-    openssl rehash "${SSLCACertificatePath}"
 
     SSLCARevocationPath=$(awk '/^SSLCARevocationPath/ { print $2 }' "${APACHE2_SSL_CONF}")
     if [ ! -d "${SSLCARevocationPath}" ]; then
         mkdir -p "${SSLCARevocationPath}"
+    else
+        rm "${SSLCARevocationPath}/"*
     fi
     for crl in $(find "${DATADIR}" -name crl.pem); do
-        ln -sf "${crl}" "$(mktemp "${SSLCARevocationPath}/crl.pem.XXXXXX")"
+        hash="$(openssl crl -noout -in "${crl}" -hash)"
+        ln -s "${crl}" "${SSLCARevocationPath}/${hash}.r0"
     done
-    openssl rehash "${SSLCARevocationPath}"
 
     /usr/sbin/httpd -k start
     sleep 5

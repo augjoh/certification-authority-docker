@@ -60,6 +60,7 @@ chain:
     - sleep 120
   script:
     - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
+    - openssl x509 -in root.crt.pem -noout -fingerprint -sha256
     - curl http://${HOSTNAME}/download/Sub/ca.crt.pem > sub.crt.pem
     - openssl verify -verbose -check_ss_sig -CAfile root.crt.pem sub.crt.pem
 
