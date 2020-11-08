@@ -23,18 +23,26 @@ apache2() {
     SSLCACertificatePath=$(awk '/^SSLCACertificatePath/ { print $2 }' "${APACHE2_SSL_CONF}")
     if [ ! -d "${SSLCACertificatePath}" ]; then
         mkdir -p "${SSLCACertificatePath}"
+    else
+        rm "${SSLCACertificatePath}/"*
     fi
-    for crt in $(find "${DATADIR}/Root" -name ca.crt.pem); do
-	ln -sf "${crt}" "$(mktemp "${SSLCACertificatePath}/ca.crt.pem.XXXXXX")"
+    for crt in $(find "${DATADIR}/Root" "${DATADIR}/Admin" -name ca.crt.pem); do
+        if [ ! -f "${crt}.revoked" ]; then
+            serial="$(basename "$(dirname "${crt}")")"
+            ln "${crt}" "${SSLCACertificatePath}/${serial}.crt.pem"
+        fi
     done
     openssl rehash "${SSLCACertificatePath}"
 
     SSLCARevocationPath=$(awk '/^SSLCARevocationPath/ { print $2 }' "${APACHE2_SSL_CONF}")
     if [ ! -d "${SSLCARevocationPath}" ]; then
         mkdir -p "${SSLCARevocationPath}"
+    else
+        rm "${SSLCARevocationPath}/"*
     fi
     for crl in $(find "${DATADIR}" -name crl.pem); do
-        ln -sf "${crl}" "$(mktemp "${SSLCARevocationPath}/crl.pem.XXXXXX")"
+        serial="$(basename "$(dirname "${crl}")")"
+        ln "${crl}" "${SSLCARevocationPath}/${serial}.pem"
     done
     openssl rehash "${SSLCARevocationPath}"
 
