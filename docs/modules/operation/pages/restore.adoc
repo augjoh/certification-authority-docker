@@ -1,4 +1,4 @@
 = Backup/Restore
 
-include::partial:restore.adoc[]
+include::partial$restore.adoc[]
 
