@@ -1,9 +1,20 @@
+= Certification Authority (CA) - Container
 
-include::docs/modules/ROOT/pages/index.adoc[]
+This projects builds and provides a container for the Certification
+Authority (https://gitlab.com/platynum/certification-authority).
 
-= Further information
+Please read https://platynum.gitlab.com/certification-authority/documentation/[
+the detailed documentation].
+
+== Further information
 
 If you experience any problems, have found a bug, or have questions,
 please visit https://gitlab.com/platynum/certification-authority/container for
 more information. Contributions are welcome!
+
+== License
+
+Certification Authority (CA) docker source code files are made available under
+GNU Affero General Public License, Version 3.0, located in the link:LICENSE[
+LICENSE] file.
 

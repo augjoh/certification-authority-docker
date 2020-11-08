@@ -3,4 +3,4 @@ name: container
 title: Container
 version: 'dev'
 nav:
-  - modules/ROOT/nav.adoc
+  - modules/nav.adoc

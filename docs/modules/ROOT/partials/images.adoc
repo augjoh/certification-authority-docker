@@ -1,0 +1,64 @@
+= Images
+
+To ease setup the certification authority, container images are provided.
+Currently there are two flavours of images: `master` and `development`.
+
+master::
+  The latest stable software release. It has been tested and undergone the full
+  release process.
+development::
+  This flavour contains the latest software, and flows. Although it might contain
+  more bugs, than `master`. It is intended for developers, only.
+
+[tabs]
+====
+master::
++
+--
+[source,shell]
+----
+$ IMAGE=registry.gitlab.com/platynum/certification-authority/container
+----
+--
+development::
++
+--
+[source,shell]
+----
+$ IMAGE=registry.gitlab.com/platynum/certification-authority/container:development
+----
+--
+====
+
+== Downloading the image
+
+[tabs]
+====
+Docker::
++
+--
+[source,bash]
+----
+$ docker pull ${IMAGE}
+----
+--
+Podman::
++
+--
+[source,bash]
+----
+$ podman pull ${IMAGE}
+----
+--
+====
+
+== Non x86-64 images
+
+There are unofficial docker images on
+`https://hub.docker.com/r/platynum/certification-authority`
+which run on BeagleBone, Raspberry PI, and other ARM- or i686-based
+hardware. These images are rebuilt daily with the `master` branch of the
+flows.
+
+WARNING: The unofficial images are not tested in any way, currently.
+

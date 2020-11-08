@@ -1,0 +1,84 @@
+= Authentication
+
+The user interface (UI) of the CA is protected via Client Certificate
+Authentication (CCA). The reverse proxy in front of Node-RED will check, if
+the client uses a certificate issued by an `Admin` certification authority.
+
+NOTE: The `Admin` certification authority is created on startup of the
+  container, but an authentication certificate has to be created manually.
+
+The remainder of this page explains, how to generate a certificate and to import
+it into a browser.
+
+== Create PKCS12/PFX file
+
+After creating the key and a corresponding certificate, these have to be
+combined into a PKCS12/PFX file. To combine them you have to enter the
+container first:
+
+[tabs]
+====
+Docker::
++
+--
+[source,shell]
+----
+$ docker exec -it node-red sh
+----
+--
+====
+
+Afterwards you can create the PKCS12/PFX file inside your container. Replace the
+highlighted password with an appropriate one.
+
+[source,shell]
+----
+$ cd /data/Admin
+$ CAFILE=$(mktemp)
+$ cat */ca.crt.pem ../Root/*/ca.crt.pem >${CAFILE}
+$ openssl pkcs12 -in    ??[a-f0-9]*/??[a-f0-9]*.crt.pem \
+                 -inkey ??[a-f0-9]*/??[a-f0-9]*.priv.key.pem \
+                 -export -out Admin.pfx -chain -CAfile ${CAFILE} -password pass:##password##
+$ rm ${CAFILE}
+----
+--
+====
+
+Download the PKCS12/PFX file from the certification authority container onto
+your host system next.
+
+[tabs]
+====
+Docker::
++
+--
+[source,shell]
+----
+$ docker cp node-red:/data/Admin/Admin.pfx .
+----
+--
+====
+
+Now you'll have to import the generated PKCS12/PFX file into your browser.
+
+== Import PKCS12/PFX file
+
+To import a PKCS12/PFX file into the certificate store of your operating system,
+you can use the following command:
+
+[tabs]
+====
+Windows Powershell::
++
+--
+[source,powershell]
+----
+PS C:\>$mypwd = Get-Credential -UserName 'Enter password below' `
+                               -Message 'Enter password below'
+PS C:\>Import-PfxCertificate -FilePath C:\Admin.pfx `
+                             -CertStoreLocation Cert:\CurrentUser\My `
+                             -Password $mypwd.Password
+----
+--
+====
+

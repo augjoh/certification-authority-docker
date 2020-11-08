@@ -1,58 +1,13 @@
-= Certification Authority (CA) - Docker
-:experimental: true
-:source-highlighter: rouge
-:icons: font
+= Container
 
 This projects builds and provides a container for the Certification
 Authority (https://gitlab.com/platynum/certification-authority).
 
-== Downloading the image
-
-[source,bash]
-----
-$ IMAGE=registry.gitlab.com/platynum/certification-authority/container
-$ docker pull ${IMAGE}
-----
-
-=== Non x86-64 images
-
-There are unofficial docker images on
-`https://hub.docker.com/r/platynum/certification-authority`
-which run on BeagleBone, Raspberry PI, and other ARM- or i686-based
-hardware. These images are rebuilt daily.
-
-WARNING: The unofficial images are not tested in any way, currently.
+include::partial$images.adoc[]
 
 == Configuration
 
-Consult the
-https://nodered.org/docs/user-guide/runtime/configuration[documentation
-of the node-red] for all possible configuration options. Some of them have been
-mapped to environment variables. If you are using docker, you can specify them
-using the `-e` command line flag.
-
-The following configuration items in settings.js can be configured using
-environment variables:
-
- * `credentialSecret`: `NODE_RED_CREDENTIAL_SECRET`, this setting has
-   **no default**
- * `logging.console.level`: `NODE_RED_LOGGING_CONSOLE_LEVEL` defaults to
-   `info`
- * `httpAdminRoot`: `NODE_RED_HTTP_ADMIN_ROOT`, defaults to `/admin`
- * `disableEditor`: `NODE_RED_DISABLE_EDITOR`, defaults to `true`
-
-The following settings should not be changed, unless you know what your
-are doing, otherwise the Apache reverse proxy might not function
-correctly!
-
- * `uiHost`: `NODE_RED_UI_HOST`, defaults to `127.0.0.1`
- * `uiPort`: `NODE_RED_UI_PORT`, defaults to `1880`
- * `editorTheme.projects.enabled`: `NODE_RED_ENABLE_PROJECTS`, defaults
-   to `false`
-
-The https://nodered.org/docs/getting-started/docker[page of node-red's docker
-container] contains additional information about the base image for this
-container.
+include::partial$environment.adoc[]
 
 == Start container
 
@@ -106,10 +61,4 @@ Import this container into the certificate store:
 PS C:\>$mypwd = Get-Credential -UserName 'Enter password below' -Message 'Enter password below'
 PS C:\>Import-PfxCertificate -FilePath C:\Admin.pfx -CertStoreLocation Cert:\CurrentUser\My -Password $mypwd.Password
 ----
-
-== License
-
-Certification Authority (CA) docker source code files are made
-available under GNU Affero General Public License, Version 3.0,
-located in the link:LICENSE[LICENSE] file.
 

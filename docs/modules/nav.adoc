@@ -2,9 +2,11 @@
 * xref:install.adoc#Installation[Installation]
 ** xref:install.adoc#Pre-requisites[Pre-requisites]
 ** xref:install.adoc#Download[Images]
-* xref:index.adoc#Startup[Startup]
-* xref:index.adoc#Shutdown[Shutdown]
-* xref:index.adoc#Backup_Restore[Backup/Restore]
+* xref:authentication.adoc[Authentication]
+
+.Operations
+* xref:operation:start-stop.adoc[Start/Stop]
+* xref:operation:backup.adoc[Backup/Restore]
 
 .Protocols
 * xref:https.adoc[HTTPS]

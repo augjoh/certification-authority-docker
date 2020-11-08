@@ -1,0 +1,28 @@
+The following assumes, that you've have run the container under the name
+`node-red`. If you've choosen a different name, please adjust the container
+name in the commands below accordingly.
+
+== Backup
+
+You can backup the container using one of the following commands;
+
+[tabs]
+====
+Docker::
++
+--
+[source,shell]
+----
+$ docker exec node-red tar cf - /data | gzip > backup-$(date +%Y-%m-%d).tgz
+----
+--
+Podman::
++
+--
+[source,shell]
+----
+$ podman exec node-red tar cf - /data | gzip > backup-$(date +%Y-%m-%d).tgz
+----
+--
+====
+
