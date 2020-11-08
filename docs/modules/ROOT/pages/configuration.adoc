@@ -1,0 +1,4 @@
+= Configuration
+
+include::partial$environment.adoc[]
+

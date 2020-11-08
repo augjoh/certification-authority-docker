@@ -1,0 +1,52 @@
+The following assumes, that you've have run the container under the name
+`node-red`. If you've choosen a different name, please adjust the container
+name in the commands below accordingly.
+
+== Start container
+
+Start the container using one of the following commands:
+
+[tabs]
+====
+Docker::
++
+--
+[source,shell]
+----
+$ docker start --name node-red
+----
+--
+Podman::
++
+--
+[source,shell]
+----
+$ podman start --name node-red
+----
+--
+====
+
+== Stop container
+
+Stop the container using one of the following commands:
+
+[tabs]
+====
+Docker::
++
+--
+[source,shell]
+----
+$ docker stop ca
+----
+--
+Podman::
++
+--
+[source,shell]
+----
+$ podman stop ca
+----
+--
+====
+

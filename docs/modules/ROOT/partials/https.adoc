@@ -32,8 +32,7 @@ A sample
 
 == Editor interface
 
-The Node-RED editor is used to configure the various flows used to
-orchetrate the whole certification authority. It is intended to be enabled
-for development, only.
-
+The Node-RED editor is used to configure the various flows used to orchetrate
+the whole certification authority. It is intended to be enabled for development,
+only.
 

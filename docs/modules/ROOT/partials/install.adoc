@@ -13,23 +13,33 @@ To install the docker container runtime on your machine, choose among
 of the following commands according to your operating system /
 distribution.
 
-.Debian/Ubuntu
+[tabs]
+====
+Debian/Ubuntu::
++
+--
 [source,bash]
 ----
 $ sudo apt install docker-io
 ----
-
-.OpenSuSE/SLES
+--
+OpenSuSE/SLES::
++
+--
 [source,bash]
 ----
 $ sudo zypper install docker
 ----
-
-.Manjaro/Archlinux
+--
+Manjaro/Archlinux::
++
+--
 [source,bash]
 ----
 $ sudo pacman -S docker
 ----
+--
+====
 
 After installation you might have to start the `docker(8)` daemon:
 [source,bash]
@@ -44,11 +54,19 @@ On RedHat / CentOS there is no docker package available by default.
 You can use `podman(1)` here to run the container. At first install
 the container runtime:
 
-.RedHat / CentOS
+[tabs]
+====
++
+--
+RedHat/CentOS::
++
+--
 [source,bash]
 ----
 $ sudo dnf install podman
 ----
+--
+====
 
 There is no daemon to be started, so you're done, already.
 
@@ -67,19 +85,26 @@ And download it with `docker(1)`: footnote:[https://docs.docker.com/engine/refer
 
 TIP: Your user might need to be part of the `docker` group to use the `docker(1)` command line utility!
 
-.Docker
+[tabs]
+====
+Docker::
++
+--
 [source,bash]
 ----
 $ docker image pull ${IMAGE}
 ----
-
+--
+Podman::
++
+--
 If you're using `podman(1)` as your container runtime, you can use `podman-pull(1)`. footnote:[http://docs.podman.io/en/latest/markdown/podman-pull.1.html]
-
-.Podman
 [source,bash]
 ----
 $ podman pull ${IMAGE}
 ----
+--
+====
 
 === Non x86-64 images
 
