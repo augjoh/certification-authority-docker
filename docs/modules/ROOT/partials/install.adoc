@@ -56,8 +56,6 @@ the container runtime:
 
 [tabs]
 ====
-+
---
 RedHat/CentOS::
 +
 --
