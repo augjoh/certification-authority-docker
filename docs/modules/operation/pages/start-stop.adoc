@@ -1,4 +1,4 @@
-= Start/Stop container
+== Start/Stop container
 
-include::partial/start-stop.adoc[]
+include::partial:start-stop.adoc[]
 
