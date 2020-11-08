@@ -6,7 +6,7 @@
 
 .Operations
 * xref:operation:start-stop.adoc[Start/Stop]
-* xref:operation:backup.adoc[Backup/Restore]
+* xref:operation:restore.adoc[Backup/Restore]
 
 .Protocols
 * xref:https.adoc[HTTPS]
