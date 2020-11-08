@@ -28,11 +28,10 @@ apache2() {
     fi
     for crt in $(find "${DATADIR}/Root" "${DATADIR}/Admin" -name ca.crt.pem); do
         if [ ! -f "${crt}.revoked" ]; then
-            serial="$(basename "$(dirname "${crt}")")"
-            ln "${crt}" "${SSLCACertificatePath}/${serial}.crt.pem"
+            hash="$(openssl x509 -noout -in "${crt}" -hash)"
+            ln -s "${crt}" "${SSLCACertificatePath}/${hash}.0"
         fi
     done
-    openssl rehash "${SSLCACertificatePath}"
 
     SSLCARevocationPath=$(awk '/^SSLCARevocationPath/ { print $2 }' "${APACHE2_SSL_CONF}")
     if [ ! -d "${SSLCARevocationPath}" ]; then
@@ -41,10 +40,9 @@ apache2() {
         rm "${SSLCARevocationPath}/"*
     fi
     for crl in $(find "${DATADIR}" -name crl.pem); do
-        serial="$(basename "$(dirname "${crl}")")"
-        ln "${crl}" "${SSLCARevocationPath}/${serial}.pem"
+        hash="$(openssl crl -noout -in "${crl}" -hash)"
+        ln -s "${crl}" "${SSLCARevocationPath}/${hash}.r0"
     done
-    openssl rehash "${SSLCARevocationPath}"
 
     /usr/sbin/httpd -k start
     sleep 5
