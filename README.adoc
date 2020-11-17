@@ -3,7 +3,7 @@
 This projects builds and provides a container for the Certification
 Authority (https://gitlab.com/platynum/certification-authority).
 
-Please read https://platynum.gitlab.com/certification-authority/documentation/[
+Please read https://platynum.gitlab.io/certification-authority/documentation/[
 the detailed documentation].
 
 == Further information
