@@ -9,7 +9,7 @@ include::partial$images.adoc[]
 
 include::partial$environment.adoc[]
 
-include::partial$backup.adoc[]
+include::partial$restore.adoc[]
 
 include::authentication.adoc[]
 
