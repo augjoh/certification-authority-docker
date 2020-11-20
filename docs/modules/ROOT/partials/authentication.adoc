@@ -1,4 +1,4 @@
-= Authentication
+== Authentication
 
 The user interface (UI) of the CA is protected via Client Certificate
 Authentication (CCA). The reverse proxy in front of Node-RED will check, if
@@ -10,7 +10,7 @@ NOTE: The `Admin` certification authority is created on startup of the
 The remainder of this page explains, how to generate a certificate and to import
 it into a browser.
 
-== Create PKCS12/PFX file
+=== Create PKCS12/PFX file
 
 After creating the key and a corresponding certificate, these have to be
 combined into a PKCS12/PFX file. To combine them you have to enter the
