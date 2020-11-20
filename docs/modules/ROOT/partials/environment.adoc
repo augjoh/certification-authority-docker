@@ -3,30 +3,29 @@
 Consult the
 https://nodered.org/docs/user-guide/runtime/configuration[documentation of
 Node-RED] for all possible configuration options. Some of them have been mapped
-to environment variables. If you are using `docker(1)` or `podman(1)`, you can
-specify them using the `-e` command line flag.
+to environment variables.
 
 The following configuration items in `/data/settings.js` can be configured
 using environment variables:
 
-NODE_RED_CREDENTIAL_SECRET::
+`NODE_RED_CREDENTIAL_SECRET`::
   this setting has **no default** (sets `credentialSecret`)
-NODE_RED_LOGGING_CONSOLE_LEVEL::
+`NODE_RED_LOGGING_CONSOLE_LEVEL`::
   defaults to `info` (sets `logging.console.level`)
-NODE_RED_HTTP_ADMIN_ROOT::
+`NODE_RED_HTTP_ADMIN_ROOT`::
   defaults to `/admin` (sets `httpAdminRoot`)
-NODE_RED_DISABLE_EDITOR::
+`NODE_RED_DISABLE_EDITOR`::
   defaults to `true` (sets `disableEditor`)
 
 The following settings should not be changed, unless you know what your are
 doing, otherwise the Apache reverse proxy might not function correctly!
 
-NODE_RED_UI_HOST::
+`NODE_RED_UI_HOST`::
   defaults to `127.0.0.1` (sets `uiHost`)
-NODE_RED_UI_PORT::
- defaults to `1880` (sets `uiPort`)
-NODE_RED_ENABLE_PROJECTS::
- defaults to `false` (sets `editorTheme.projects.enabled`)
+`NODE_RED_UI_PORT`::
+  defaults to `1880` (sets `uiPort`)
+`NODE_RED_ENABLE_PROJECTS`::
+  defaults to `false` (sets `editorTheme.projects.enabled`)
 
 The https://nodered.org/docs/getting-started/docker[page of Node-RED's docker
 container] contains additional information about the base image for this
