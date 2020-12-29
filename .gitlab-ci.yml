@@ -132,7 +132,7 @@ https:
   script:
     - openssl s_client -showcerts -CAfile "${ADDITIONAL_CA_FILES}" -connect ${HOSTNAME}:443 </dev/null
     - openssl s_client -showcerts -connect ${HOSTNAME}:443 | openssl x509 -noout -text
-    - testssl https://${HOSTNAME}/
+    - testssl https://${HOSTNAME}/ || echo "testssl exit code $?"
 
 websocket:
   image: debian:latest
