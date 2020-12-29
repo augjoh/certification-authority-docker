@@ -116,7 +116,7 @@ metrics:
     - cat metrics.prom | promtool check metrics
 
 https:
-  image: debian:latest
+  image: debian:bullseye
   variables:
     PHONE_OUT: "true"
     ADDITIONAL_CA_FILES: "root.crt.pem"
