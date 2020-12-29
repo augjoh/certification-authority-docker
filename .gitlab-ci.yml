@@ -117,6 +117,9 @@ metrics:
 
 https:
   image: debian:latest
+  variables:
+    PHONE_OUT: "true"
+    ADDITIONAL_CA_FILES: "root.crt.pem"
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
       alias: nodejs.rz-bsd.my.corp
@@ -125,11 +128,11 @@ https:
     - apt-get -q update
     - apt-get -q install -y curl openssl testssl.sh
     - sleep 120
-    - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
+    - curl http://${HOSTNAME}/download/Root/ca.crt.pem > "${ADDITIONAL_CA_FILES}"
   script:
-    - openssl s_client -showcerts -CAfile root.crt.pem -connect ${HOSTNAME}:443 </dev/null
+    - openssl s_client -showcerts -CAfile "${ADDITIONAL_CA_FILES}" -connect ${HOSTNAME}:443 </dev/null
     - openssl s_client -showcerts -connect ${HOSTNAME}:443 | openssl x509 -noout -text
-    - testssl --add-ca root.crt.pem https://${HOSTNAME}/
+    - testssl https://${HOSTNAME}/
 
 websocket:
   image: debian:latest
