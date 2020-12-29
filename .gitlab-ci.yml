@@ -129,7 +129,7 @@ https:
   script:
     - openssl s_client -showcerts -CAfile root.crt.pem -connect ${HOSTNAME}:443 </dev/null
     - openssl s_client -showcerts -connect ${HOSTNAME}:443 | openssl x509 -noout -text
-    - testssl.sh https://${HOSTNAME}/
+    - testssl https://${HOSTNAME}/
 
 websocket:
   image: debian:latest
