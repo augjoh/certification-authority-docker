@@ -9,12 +9,9 @@ cd "${DATADIR}" || exit 1
 apache2() {
     APACHE2_SSL_CONF=/etc/apache2/conf.d/ssl.conf
 
-    while [ ! -f "${DATADIR}/Sub/https.crt.pem" ]; do
+    while [ ! -f "${DATADIR}/Sub/https/https.crt.pem" ]; do
         sleep 3
     done
-
-    SSLCertificateChainFile=$(awk '/^SSLCertificateChainFile/ { print $2 }' "${APACHE2_SSL_CONF}")
-    ln -sf "${DATADIR}/$(openssl x509 -in "${DATADIR}/Sub/https.crt.pem" -noout -text | awk '/CA Issuers/ { print $4 }' | sed 's#.*\(Sub/[a-f0-9]\{64\}\)/ca.crt.cer#\1/ca.crt.pem#')" "${SSLCertificateChainFile}"
 
     while ! find "${DATADIR}/Admin" -name ca.crt.pem >/dev/null 2>&1; do
         sleep 3
@@ -27,9 +24,11 @@ apache2() {
         rm "${SSLCACertificatePath}/"*
     fi
     for crt in $(find "${DATADIR}/Root" "${DATADIR}/Admin" -name ca.crt.pem); do
+        hash="$(openssl x509 -noout -in "${crt}" -hash)"
         if [ ! -f "${crt}.revoked" ]; then
-            hash="$(openssl x509 -noout -in "${crt}" -hash)"
-            ln -s "${crt}" "${SSLCACertificatePath}/${hash}.0"
+            ln -sf "${crt}" "${SSLCACertificatePath}/${hash}.0"
+        else
+            rm -f "${SSLCACertificatePath}/${hash}.0"
         fi
     done
 
@@ -41,7 +40,7 @@ apache2() {
     fi
     for crl in $(find "${DATADIR}" -name crl.pem); do
         hash="$(openssl crl -noout -in "${crl}" -hash)"
-        ln -s "${crl}" "${SSLCARevocationPath}/${hash}.r0"
+        ln -sf "${crl}" "${SSLCARevocationPath}/${hash}.r0"
     done
 
     /usr/sbin/httpd -k start
