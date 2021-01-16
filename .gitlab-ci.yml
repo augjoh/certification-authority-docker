@@ -92,9 +92,10 @@ crls:
     - curl -v ${CRL_URI/.der/.pem} > sub.crl.pem
   artifacts:
     paths:
-      - *.crt.pem
-      - *.crl.pem
-      - *.crl.der
+      - "*.crt.pem"
+      - "*.crl.pem"
+      - "*.crl.der"
+    when: on_failure
 
 ocsp:
   image: debian:latest
