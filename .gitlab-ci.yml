@@ -153,16 +153,15 @@ ui:
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
       alias: nodejs.rz-bsd.my.corp
-      entrypoint: ["/bin/sh", "-c", "mkdir /builds/Admin /builds/Sub /builds/Root && ln -s /builds/Admin /data/Admin && ln -s /builds/Sub /data/Sub && ln -s /builds/Root /data/Root && exec /usr/bin/entrypoint.sh"]
+      entrypoint: ["/bin/sh", "-c", "mkdir /builds/Admin /builds/Sub /builds/Root && ln -s /builds/Admin /data/Admin && ln -s /builds/Sub /data/Sub && ln -s /builds/Root /data/Root && ls -l /builds/ /data/ && exec /usr/bin/entrypoint.sh"]
   stage: test
   before_script:
     - apt-get -q update
     - apt-get -q install -y curl openssl
     - sleep 120
   script:
-    - pwd
-    - ls -lR ..
-    - curl -v --key Admin/*/*.key.pem --cert Admin/*/*.crt.pem https://${HOSTNAME}/ui
+    - ls -l /builds
+    - curl -v --key /builds/Admin/*/*.key.pem --cert /builds/Admin/*/*.crt.pem https://${HOSTNAME}/ui
   allow_failure: true
 
 websocket:
