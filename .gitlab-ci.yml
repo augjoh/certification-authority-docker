@@ -153,7 +153,7 @@ ui:
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
       alias: nodejs.rz-bsd.my.corp
-      entrypoint: ["/bin/sh", "-c", "mkdir /builds/Admin /builds/Sub /builds/Root && ln -s /builds/Admin /data/Admin && ln -s /builds/Sub /data/Sub && ln -s /builds/Root /data/Root && ls -l /builds/ /data/ && exec /usr/bin/entrypoint.sh"]
+      entrypoint: ["/bin/sh", "-c", "mkdir /builds/Admin /builds/Sub /builds/Root && ln -s /builds/Admin /data/Admin && ln -s /builds/Sub /data/Sub && ln -s /builds/Root /data/Root && chown node-red /builds/Admin /builds/Sub /builds/Root && ls -l /builds/ /data/ && exec /usr/bin/entrypoint.sh"]
   stage: test
   before_script:
     - apt-get -q update
