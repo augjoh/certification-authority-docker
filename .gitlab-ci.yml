@@ -160,7 +160,8 @@ ui:
     - apt-get -q install -y curl openssl
     - sleep 120
   script:
-    - ls -l /builds
+    - ls -lR /builds/{Admin,Root,Sub}
+    - id
     - curl -v --key /builds/Admin/*/*.key.pem --cert /builds/Admin/*/*.crt.pem https://${HOSTNAME}/ui
   allow_failure: true
 
