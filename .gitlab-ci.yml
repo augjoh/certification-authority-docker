@@ -163,7 +163,8 @@ ui:
     - sleep 120
   script:
     - ls -lR /builds/{Admin,Root,Sub}
-    - curl -L -v --key /builds/Admin/keys/*/???*.key.pem --cert /builds/Admin/certificates/*/???*.crt.pem https://${HOSTNAME}/
+    - echo curl -L -v --key /builds/Admin/keys/*/???*.priv.key.pem --cert /builds/Admin/certificates/*/???*.crt.pem https://${HOSTNAME}/
+    - curl -L -v --key /builds/Admin/keys/*/???*.priv.key.pem --cert /builds/Admin/certificates/*/???*.crt.pem https://${HOSTNAME}/
   allow_failure: true
 
 websocket:
