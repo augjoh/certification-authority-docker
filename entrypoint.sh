@@ -23,7 +23,7 @@ apache2() {
     else
         rm "${SSLCACertificatePath}/"*
     fi
-    for crt in $(find "${DATADIR}/Root/" "${DATADIR}/Admin" -name ca.crt.pem); do
+    for crt in $(find "${DATADIR}/Root/" "${DATADIR}/Admin/" -name ca.crt.pem); do
         hash="$(openssl x509 -noout -in "${crt}" -hash)"
         if [ ! -f "${crt}.revoked" ]; then
             ln -sf "${crt}" "${SSLCACertificatePath}/${hash}.0"
