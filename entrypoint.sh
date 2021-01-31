@@ -13,7 +13,7 @@ apache2() {
         sleep 3
     done
 
-    while ! find "${DATADIR}/Admin" -name ca.crt.pem >/dev/null 2>&1; do
+    while ! find "${DATADIR}/Admin/" -name ca.crt.pem >/dev/null 2>&1; do
         sleep 3
     done
 
@@ -23,7 +23,7 @@ apache2() {
     else
         rm "${SSLCACertificatePath}/"*
     fi
-    for crt in $(find "${DATADIR}/Root" "${DATADIR}/Admin" -name ca.crt.pem); do
+    for crt in $(find "${DATADIR}/Root/" "${DATADIR}/Admin" -name ca.crt.pem); do
         hash="$(openssl x509 -noout -in "${crt}" -hash)"
         if [ ! -f "${crt}.revoked" ]; then
             ln -sf "${crt}" "${SSLCACertificatePath}/${hash}.0"
@@ -38,7 +38,7 @@ apache2() {
     else
         rm "${SSLCARevocationPath}/"*
     fi
-    for crl in $(find "${DATADIR}" -name crl.pem); do
+    for crl in $(find -L "${DATADIR}" -name crl.pem); do
         hash="$(openssl crl -noout -in "${crl}" -hash)"
         ln -sf "${crl}" "${SSLCARevocationPath}/${hash}.r0"
     done
