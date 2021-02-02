@@ -77,11 +77,25 @@ crls:
   script:
     - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
     - curl http://${HOSTNAME}/download/Sub/ca.crt.pem > sub.crt.pem
-    - CRL_URI=$(openssl x509 -in sub.crt.pem -noout -text | grep -A3 "X509v3 CRL Distribution Points" | tail -n1 | sed 's/URI://')
+    - "CRL_URI=$(openssl x509 -in sub.crt.pem -noout -text | grep -A3 'X509v3 CRL Distribution Points' | awk -FURI: '/URI:/ { print $2 }')"
     - echo CRL_URI=${CRL_URI}
-    - curl ${CRL_URI} > root.crl.der
+    - curl -v ${CRL_URI} > root.crl.der
+    - curl -v ${CRL_URI/.der/.pem} > sub.crl.pem
     - openssl crl -CAfile root.crt.pem -noout -text -inform DER -in root.crl.der -verify
     - openssl verify -CAfile root.crt.pem -crl_download -crl_check sub.crt.pem
+    # Check Sub-CA's CRL
+    - openssl s_client -showcerts -connect ${HOSTNAME}:443 < /dev/null | openssl x509 > https.crt.pem
+    - "CRL_URI=$(openssl x509 -in https.crt.pem -noout -text | grep -A3 'X509v3 CRL Distribution Points' | awk -FURI: '/URI:/ { print $2 }')"
+    - echo CRL_URI=${CRL_URI}
+    - curl -v ${CRL_URI} > sub.crl.der
+    - openssl crl -CAfile sub.crt.pem -noout -text -inform DER -in sub.crl.der -verify
+    - curl -v ${CRL_URI/.der/.pem} > sub.crl.pem
+  artifacts:
+    paths:
+      - "*.crt.pem"
+      - "*.crl.pem"
+      - "*.crl.der"
+    when: on_failure
 
 ocsp:
   image: debian:latest
@@ -132,7 +146,26 @@ https:
   script:
     - openssl s_client -showcerts -CAfile "${ADDITIONAL_CA_FILES}" -connect ${HOSTNAME}:443 </dev/null
     - openssl s_client -showcerts -connect ${HOSTNAME}:443 | openssl x509 -noout -text
-    - testssl https://${HOSTNAME}/ || echo "testssl exit code $?"
+    - testssl --debug 2 https://${HOSTNAME}/ || echo "testssl exit code $?"
+
+ui:
+  image: debian:bullseye
+  variables:
+    ADMIN_CERTIFICATE: "true"
+  services:
+    - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
+      alias: nodejs.rz-bsd.my.corp
+      entrypoint: ["/bin/sh", "-c", "mkdir /builds/Admin /builds/Sub /builds/Root && ln -s /builds/Admin /data/Admin && ln -s /builds/Sub /data/Sub && ln -s /builds/Root /data/Root && chown node-red /builds/Admin /builds/Sub /builds/Root && ls -l /builds/ /data/ && exec /usr/bin/entrypoint.sh"]
+  stage: test
+  before_script:
+    - apt-get -q update
+    - apt-get -q install -y curl openssl
+    - sleep 120
+  script:
+    - ls -lR /builds/{Admin,Root,Sub}
+    - echo curl -L -v --cacert /builds/Root/certificates/*/ca.crt.pem --key /builds/Admin/keys/*/???*.priv.key.pem --cert /builds/Admin/certificates/*/???*.crt.pem https://${HOSTNAME}/
+    - curl -L -v --cacert /builds/Root/certificates/*/ca.crt.pem --key /builds/Admin/keys/*/???*.priv.key.pem --cert /builds/Admin/certificates/*/???*.crt.pem https://${HOSTNAME}/
+  allow_failure: true
 
 websocket:
   image: debian:latest

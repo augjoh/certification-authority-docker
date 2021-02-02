@@ -24,8 +24,9 @@ HEALTHCHECK --start-period=120s \
 COPY httpd.conf /etc/apache2/httpd.conf
 COPY httpd-ssl.conf /etc/apache2/conf.d/ssl.conf
 RUN rm -f /etc/ssl/apache2/server.{key,pem} \
- && ln -sf /data/Sub/https.crt.pem /etc/ssl/apache2/server.pem \
- && ln -sf /data/Sub/https.priv.key.pem /etc/ssl/apache2/server.key
+ && ln -sf /data/Sub/https/https.crt.pem /etc/ssl/apache2/server.pem \
+ && ln -sf /data/Sub/https/https.priv.key.pem /etc/ssl/apache2/server.key \
+ && ln -sf /data/Sub/https/ca.crt.pem /etc/ssl/apache2/server-ca.pem
 
 EXPOSE 80 3180 443
 
