@@ -52,4 +52,14 @@ apache2() {
 # This creates a zombie
 apache2 &
 
+# Disable unused flows
+if [ -z "${NODE_RED_DISABLE_FLOWS}" ]; then
+    for flow in ${NODE_RED_DISABLE_FLOWS}; do
+        echo "Disabling flow '${flow}'"
+        TMPFILE=$(mktemp)
+        jq "map(if (.type == \"tab\" and match(\"${flow}\", .label)) then . + {\"disabled\": false} else . end)" "/data/${FLOWS}" > "${TMPFILE}"
+        mv "${TMPFILE}" "/data/$FLOWS"
+    done
+fi
+
 exec su -c "node $NODE_OPTIONS /usr/src/node-red/node_modules/node-red/red.js --userDir /data $FLOWS" node-red

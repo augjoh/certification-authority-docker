@@ -16,6 +16,10 @@ using environment variables:
   defaults to `/admin` (sets `httpAdminRoot`)
 `NODE_RED_DISABLE_EDITOR`::
   defaults to `true` (sets `disableEditor`)
+`NODE_RED_DISABLE_FLOWS`::
+  disable flows by name (`ACMEv2`, `CA`, `CMP`, `CRL`, `https`, `OCSP`,
+  `SCEP`) separated by space, by default this isn't set and all flows are
+  started automatically.
 
 The following settings should not be changed, unless you know what your are
 doing, otherwise the Apache reverse proxy might not function correctly!
