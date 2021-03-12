@@ -10,6 +10,7 @@ USER root
 RUN apk --no-cache add apache2-ssl \
                        apache2-proxy \
                        ca-certificates \
+                       jq \
                        openssl
 COPY entrypoint.sh /usr/bin/
 COPY healthcheck.js /
