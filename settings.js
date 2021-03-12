@@ -181,7 +181,7 @@ module.exports = {
           case 'application/ocsp-request':
             req.headers['content-type'] = 'application/octet-stream';
             break;
-	}
+        }
         next();
     },
 
@@ -220,8 +220,8 @@ module.exports = {
         // os:require('os'),
         // jfive:require("johnny-five"),
         // j5board:require("johnny-five").Board({repl:false})
-	jsrsasign:require('jsrsasign'),
-	fs:require('fs'),
+        jsrsasign:require('jsrsasign'),
+        fs:require('fs'),
         dns:require('dns'),
         url:require('url'),
         rocatest:require('@platynum/rocatest'),
