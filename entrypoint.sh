@@ -48,19 +48,19 @@ apache2() {
     tail /var/log/apache2/*.log
 }
 
-if [ "${NODE_RED_ENABLE_APACHE}" != "false" ]; then
+if [ "${CONTAINER_ENABLE_APACHE}" != "false" ]; then
     /usr/sbin/httpd -v
     # This creates a zombie
     apache2 &
 fi
 
 # Disable unused flows
-if [ ! -z "${NODE_RED_ENABLE_FLOWS}" ]; then
-    echo "Enabling flows matching '${NODE_RED_ENABLE_FLOWS}', only."
+if [ ! -z "${CONTAINER_ENABLE_FLOWS}" ]; then
+    echo "Enabling flows matching '${CONTAINER_ENABLE_FLOWS}', only."
     TMPFILE=$(mktemp)
     cp -a "${DATADIR}/${FLOWS}" "${DATADIR}/${FLOWS}.bck"
     jq "[ .[] |
-	    (select(.type == \"tab\") | if ( .label | test(\"${NODE_RED_ENABLE_FLOWS}\")) then
+	    (select(.type == \"tab\") | if ( .label | test(\"${CONTAINER_ENABLE_FLOWS}\")) then
                                             . + {\"disabled\": false}
 				        else
                                             . + {\"disabled\": true}
