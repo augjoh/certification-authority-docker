@@ -47,19 +47,26 @@ apache2() {
     sleep 5
     tail /var/log/apache2/*.log
 }
-/usr/sbin/httpd -v
 
-# This creates a zombie
-apache2 &
+if [ "${NODE_RED_ENABLE_APACHE}" != "false" ]; then
+    /usr/sbin/httpd -v
+    # This creates a zombie
+    apache2 &
+fi
 
 # Disable unused flows
-if [ -z "${NODE_RED_DISABLE_FLOWS}" ]; then
-    for flow in ${NODE_RED_DISABLE_FLOWS}; do
-        echo "Disabling flow '${flow}'"
-        TMPFILE=$(mktemp)
-        jq "map(if (.type == \"tab\" and match(\"${flow}\", .label)) then . + {\"disabled\": false} else . end)" "/data/${FLOWS}" > "${TMPFILE}"
-        mv "${TMPFILE}" "/data/$FLOWS"
-    done
+if [ ! -z "${NODE_RED_ENABLE_FLOWS}" ]; then
+    echo "Enabling flows matching '${NODE_RED_ENABLE_FLOWS}', only."
+    TMPFILE=$(mktemp)
+    cp -a "${DATADIR}/${FLOWS}" "${DATADIR}/${FLOWS}.bck"
+    jq "[ .[] |
+	    (select(.type == \"tab\") | if ( .label | test(\"${NODE_RED_ENABLE_FLOWS}\")) then
+                                            . + {\"disabled\": false}
+				        else
+                                            . + {\"disabled\": true}
+				        end),
+             select(.type != \"tab\") ]" "${DATADIR}/${FLOWS}" > "${TMPFILE}"
+    mv "${TMPFILE}" "${DATADIR}/${FLOWS}"
 fi
 
 exec su -c "node $NODE_OPTIONS /usr/src/node-red/node_modules/node-red/red.js --userDir /data $FLOWS" node-red
