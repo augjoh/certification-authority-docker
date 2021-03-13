@@ -1,5 +1,14 @@
 FROM nodered/node-red:latest-minimal
 
+LABEL org.opencontainers.image.url="https://registry.gitlab.com/platynum/certification-authority/container" \
+      org.opencontainers.image.documentation="https://platynum.gitlab.io/certification-authority/documentation/" \
+      org.opencontainers.image.source="https://gitlab.com/platynum/certification-authority/container" \
+      org.opencontainers.image.version="0.8.0" \
+      org.opencontainers.image.vendor="https://platynum.ch/" \
+      org.opencontainers.image.licenses="AGPL-3.0" \
+      org.opencontainers.image.title="platynum certification authority" \
+      org.opencontainers.image.description="Certification authority based on Node-RED"
+
 COPY settings.js /data/settings.js
 COPY flows/flows.json /data/flows.json
 
@@ -10,6 +19,7 @@ USER root
 RUN apk --no-cache add apache2-ssl \
                        apache2-proxy \
                        ca-certificates \
+                       jq \
                        openssl
 COPY entrypoint.sh /usr/bin/
 COPY healthcheck.js /
