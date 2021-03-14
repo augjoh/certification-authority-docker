@@ -1,0 +1,34 @@
+= Starting multiple OCSP instances
+
+The following is an example how to start multiple OCSP (Online
+Certificate Status Protocol) responders for a single CA (Certification
+Authority). It is assumed to run this under a Debian based Linux
+distribution as user `root`.
+
+== Prepare environment
+
+Install `docker(8)`, `docker-compose(1)`:
+
+[source,shell]
+----
+# apt-get install docker.io docker-compose
+# systemctl start docker
+----
+
+Prepare directories for bind mounts:
+
+[source,shell]
+----
+# mkdir -p Root/{keys,certificates,crls} Sub/{acme,certificates,crls,ocsp,keys} Admin/{certificates,crls,keys}
+# chown -R 1000:1000 Root/ Sub/ Admin/
+----
+
+== Launch it
+
+[source,shell]
+----
+# docker-compose up -d --scale ocsp=5
+----
+
+That's it! Have fun ...
+
