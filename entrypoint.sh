@@ -57,7 +57,6 @@ fi
 # Disable unused flows
 if [ ! -z "${CONTAINER_ENABLE_FLOWS}" ]; then
     echo "Enabling flows matching '${CONTAINER_ENABLE_FLOWS}', only."
-    TMPFILE=$(mktemp)
     cp -a "${DATADIR}/${FLOWS}" "${DATADIR}/${FLOWS}.bck"
     jq "[ .[] |
 	    (select(.type == \"tab\") | if ( .label | test(\"${CONTAINER_ENABLE_FLOWS}\")) then
@@ -65,8 +64,7 @@ if [ ! -z "${CONTAINER_ENABLE_FLOWS}" ]; then
 				        else
                                             . + {\"disabled\": true}
 				        end),
-             select(.type != \"tab\") ]" "${DATADIR}/${FLOWS}" > "${TMPFILE}"
-    mv "${TMPFILE}" "${DATADIR}/${FLOWS}"
+             select(.type != \"tab\") ]" "${DATADIR}/${FLOWS}.bck" > "${DATADIR}/${FLOWS}"
 fi
 
 exec su -c "node $NODE_OPTIONS /usr/src/node-red/node_modules/node-red/red.js --userDir /data $FLOWS" node-red
