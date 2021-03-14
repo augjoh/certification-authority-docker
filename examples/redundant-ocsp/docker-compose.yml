@@ -1,0 +1,67 @@
+version: '3'
+services:
+   traefik:
+      image: traefik:v2.4
+      command:
+         - "--api.insecure=true"
+         - "--api.dashboard=true"
+         - "--providers.docker"
+         - "--log.level=DEBUG"
+         - "--entrypoints.web.address=:80"
+         - "--entrypoints.websecure.address=:443"
+         - "--entrypoints.tsa.address=:318"
+         - "--serversTransport.insecureSkipVerify=true"
+      volumes:
+         - /var/run/docker.sock:/var/run/docker.sock:ro
+      ports:
+         - "80:80"
+         - "443:443"
+         - "318:318"
+         - "8080:8080"
+   ca:
+      image: registry.gitlab.com/platynum/certification-authority/container
+      labels:
+         - "traefik.enable=true"
+         - "traefik.http.routers.acme.rule=Host(`acme.rz-lxd.my.corp`)"
+         - "traefik.http.routers.acme.entrypoints=web"
+         - "traefik.http.services.acme-root.loadBalancer.server.port=80"
+         - "traefik.tcp.routers.acme.rule=HostSNI(`acme.rz-lxd.my.corp`)"
+         - "traefik.tcp.routers.acme.entrypoints=websecure"
+         - "traefik.tcp.routers.acme.service=acme-root@docker"
+         - "traefik.tcp.routers.acme.tls.passthrough=true"
+         - "traefik.tcp.services.acme-root.loadBalancer.server.port=443"
+         - "traefik.tcp.routers.tsa.rule=HostSNI(`*`)"
+         - "traefik.tcp.routers.tsa.entrypoints=tsa"
+         - "traefik.tcp.routers.tsa.service=tsa-root@docker"
+         - "traefik.tcp.services.tsa-root.loadBalancer.server.port=3180"
+      environment:
+         - HOSTNAME=acme.rz-lxd.my.corp
+         - NODE_RED_UI_HOST=0.0.0.0
+         - NODE_RED_DISABLE_EDITOR=false
+      ports:
+         - "1880:1880"
+      volumes:
+         - /root/Root:/data/Root
+         - /root/Sub:/data/Sub
+         - /root/Admin:/data/Admin
+   ocsp:
+      image: registry.gitlab.com/platynum/certification-authority/container
+      labels:
+         - "traefik.enable=true"
+         - "traefik.http.routers.ocsp.rule=Host(`acme.rz-lxd.my.corp`) && PathPrefix(`/ocsp`)"
+         - "traefik.http.routers.ocsp.entrypoints=web"
+         - "traefik.http.services.ocsp-root.loadBalancer.server.port=1880"
+      environment:
+         - HOSTNAME=acme.rz-lxd.my.corp
+         - CONTAINER_ENABLE_FLOWS=OCSP|Monitoring
+         - CONTAINER_ENABLE_APACHE=false
+         - NODE_RED_UI_HOST=0.0.0.0
+         - HEALTH_USERNAME=opennms
+         - HEALTH_PASSWORD=password
+      volumes:
+         - /root/Sub/certificates:/data/Sub/certificates:ro
+         - /root/Sub/crls:/data/Sub/crls:ro
+         - /root/Sub/ocsp:/data/Sub/ocsp:ro
+      depends_on:
+         - ca
+
