@@ -221,11 +221,12 @@ module.exports = {
         // jfive:require("johnny-five"),
         // j5board:require("johnny-five").Board({repl:false})
         jsrsasign:require('jsrsasign'),
-        fs:require('fs'),
-        dns:require('dns'),
-        url:require('url'),
         rocatest:require('@platynum/rocatest'),
     },
+
+    // Allow the Function node to load additional npm modules
+	  functionExternalModules: true,
+
     // `global.keys()` returns a list of all properties set in global context.
     // This allows them to be displayed in the Context Sidebar within the editor.
     // In some circumstances it is not desirable to expose them to the editor. The
@@ -234,7 +235,6 @@ module.exports = {
     // By default, the property is set to false to avoid accidental exposure of
     // their values. Setting this to true will cause the keys to be listed.
     exportGlobalContextKeys: false,
-
 
     // Context Storage
     // The following property can be used to enable context storage. The configuration
