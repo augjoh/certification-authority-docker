@@ -53,7 +53,7 @@ services:
          - "traefik.http.services.ocsp-root.loadBalancer.server.port=1880"
       environment:
          - HOSTNAME=acme.rz-lxd.my.corp
-         - CONTAINER_ENABLE_FLOWS=OCSP|Monitoring
+         - CONTAINER_ENABLE_FLOWS=OCSP|Health|Metrics
          - CONTAINER_ENABLE_APACHE=false
          - NODE_RED_UI_HOST=0.0.0.0
          - HEALTH_USERNAME=opennms
