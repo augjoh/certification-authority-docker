@@ -24,6 +24,7 @@ RUN set -ex && \
     mkdir -p /usr/src/node-red /data && \
     deluser --remove-home node && \
     adduser -h /usr/src/node-red -D -H node-red -u 1000 && \
+    curl -o /data/public_suffix_list.dat https://publicsuffix.org/list/public_suffix_list.dat && \
     chown -R node-red:users /data
     # chmod -R g+rwX /data && \
     # chown -R node-red:root /usr/src/node-red && chmod -R g+rwX /usr/src/node-red
