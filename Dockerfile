@@ -15,6 +15,7 @@ RUN set -ex && \
         apache2-proxy \
         apache2-ssl \
         ca-certificates \
+        git \
         tzdata \
         iputils \
         jq \
