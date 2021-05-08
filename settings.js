@@ -222,6 +222,7 @@ module.exports = {
         // j5board:require("johnny-five").Board({repl:false})
         jsrsasign:require('jsrsasign'),
         rocatest:require('@platynum/rocatest'),
+        uts46:require('idna-uts46-hx')
     },
 
     // Allow the Function node to load additional npm modules
