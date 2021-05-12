@@ -26,7 +26,7 @@ RUN set -ex && \
     deluser --remove-home node && \
     adduser -h /usr/src/node-red -D -H node-red -u 1000 && \
     curl -o /data/public_suffix_list.dat https://publicsuffix.org/list/public_suffix_list.dat && \
-    chown -R node-red:users /data
+    chown -R node-red:node-red /data
     # chmod -R g+rwX /data && \
     # chown -R node-red:root /usr/src/node-red && chmod -R g+rwX /usr/src/node-red
     # chown -R node-red:node-red /data && \
@@ -39,8 +39,8 @@ WORKDIR /usr/src/node-red
 ENV NODE_PATH=/usr/src/node-red/node_modules:/data/node_modules \
     FLOWS=flows.json
 
-COPY --chown=node-red:users settings.js /data/settings.js
-COPY --chown=node-red:users flows/flows.json /data/flows.json
+COPY --chown=node-red:node-red settings.js /data/settings.js
+COPY --chown=node-red:node-red flows/flows.json /data/flows.json
 
 COPY flows/package.json flows/package-lock.json /usr/src/node-red/
 RUN npm ci --production
