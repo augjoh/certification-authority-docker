@@ -81,9 +81,9 @@ crls:
     - "CRL_URI=$(openssl x509 -in sub.crt.pem -noout -text | grep -A3 'X509v3 CRL Distribution Points' | awk -FURI: '/URI:/ { print $2 }')"
     - echo CRL_URI=${CRL_URI}
     - curl -v ${CRL_URI} > root.crl.der
-    - curl -v ${CRL_URI/.der/.pem} > sub.crl.pem
+    - curl -v ${CRL_URI/.der/.pem} > root.crl.pem
     - openssl crl -CAfile root.crt.pem -noout -text -inform DER -in root.crl.der -verify
-    - openssl verify -CAfile root.crt.pem -crl_download -crl_check sub.crt.pem
+    - openssl verify -verbose -CAfile root.crt.pem -crl_download -crl_check sub.crt.pem
     # Check Sub-CA's CRL
     - openssl s_client -showcerts -connect ${HOSTNAME}:443 < /dev/null | openssl x509 > https.crt.pem
     - "CRL_URI=$(openssl x509 -in https.crt.pem -noout -text | grep -A3 'X509v3 CRL Distribution Points' | awk -FURI: '/URI:/ { print $2 }')"
