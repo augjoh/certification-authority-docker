@@ -18,25 +18,25 @@ apache2() {
     done
 
     SSLCACertificatePath=$(awk '/^SSLCACertificatePath/ { print $2 }' "${APACHE2_SSL_CONF}")
-    if [ -d "${SSLCACertificatePath}" ]; then
-        rm "${SSLCACertificatePath}/"*
-    else
+    if [ ! -d "${SSLCACertificatePath}" ]; then
         mkdir -p "${SSLCACertificatePath}"
+    else
+        rm "${SSLCACertificatePath}/"*
     fi
     for crt in $(find "${DATADIR}/Root/" "${DATADIR}/Admin/" -name ca.crt.pem); do
         hash="$(openssl x509 -noout -in "${crt}" -hash)"
-        if [ -f "${crt}.revoked" ]; then
-            rm -f "${SSLCACertificatePath}/${hash}.0"
-        else
+        if [ ! -f "${crt}.revoked" ]; then
             ln -sf "${crt}" "${SSLCACertificatePath}/${hash}.0"
+        else
+            rm -f "${SSLCACertificatePath}/${hash}.0"
         fi
     done
 
     SSLCARevocationPath=$(awk '/^SSLCARevocationPath/ { print $2 }' "${APACHE2_SSL_CONF}")
-    if [ -d "${SSLCARevocationPath}" ]; then
-        rm "${SSLCARevocationPath}/"*
-    else
+    if [ ! -d "${SSLCARevocationPath}" ]; then
         mkdir -p "${SSLCARevocationPath}"
+    else
+        rm "${SSLCARevocationPath}/"*
     fi
     for crl in $(find -L "${DATADIR}" -name crl.pem); do
         hash="$(openssl crl -noout -in "${crl}" -hash)"
@@ -55,7 +55,7 @@ if [ "${CONTAINER_ENABLE_APACHE}" != "false" ]; then
 fi
 
 # Disable unused flows
-if [ -n "${CONTAINER_ENABLE_FLOWS}" ]; then
+if [ ! -z "${CONTAINER_ENABLE_FLOWS}" ]; then
     echo "Enabling flows matching '${CONTAINER_ENABLE_FLOWS}', only."
     cp -a "${DATADIR}/${FLOWS}" "${DATADIR}/${FLOWS}.bck"
     jq "[ .[] |
