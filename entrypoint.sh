@@ -56,7 +56,7 @@ fi
 
 # Disable unused flows
 if [ -n "${CONTAINER_ENABLE_FLOWS}" ]; then
-    echo "Enabling flows matching '${CONTAINER_ENABLE_FLOWS}', only."
+    echo "$(date "+%d %b %H:%M:%S") - [info] Enabling flows matching '${CONTAINER_ENABLE_FLOWS}', only."
     cp -a "${DATADIR}/${FLOWS}" "${DATADIR}/${FLOWS}.bck"
     jq "[ .[] |
 	    (select(.type == \"tab\") | if ( .label | test(\"${CONTAINER_ENABLE_FLOWS}\")) then
