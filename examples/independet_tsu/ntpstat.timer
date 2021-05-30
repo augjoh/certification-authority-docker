@@ -1,0 +1,11 @@
+[Unit]
+Description=Timer to run ntpstat.service
+
+[Timer]
+OnBootSec=5m
+#OnUnitInactiveSec=1m
+OnUnitInactiveSec=20s
+AccuracySec=1ms
+
+[Install]
+WantedBy=basic.target

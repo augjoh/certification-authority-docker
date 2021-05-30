@@ -1,0 +1,135 @@
+# Independent Time Stamping Units (TSUs)
+
+## Setup Certification Authority (CA)
+
+The following steps setup an offline CA and two timestamping units.
+
+### Pre-requisites
+
+Install software pre-requisites:
+
+[source,bash]
+----
+# dnf install podman
+----
+
+### Generate keys and certificates
+
+Generate a Root certification authority and two timestamping
+units on an offline system:
+
+.tsu-setup.sh
+----
+include:tsu-setup.sh[]
+----
+
+[source,sh]
+----
+# ./tsu-setup.sh
+----
+
+Copy the generated `.tar.gz` files onto the timestamping units.
+
+## Configure TSU service
+
+### Prerequisites
+
+Install pre-requisites:
+
+[source,bash]
+----
+# dnf install chronyd ntpstat podman
+# systemctl enable chronyd
+# systemctl start chronyd
+----
+
+### Keys and certificates
+
+Extract TSU key and certificates:
+
+[source,sh]
+----
+# tar xvfz tsu-1.20210529.tgz
+----
+
+### Setup container
+
+Create a file with environment for the container:
+
+.tsu.env
+[source,txt]
+----
+CONTAINER_ENABLE_APACHE=false
+CONTAINER_ENABLE_FLOWS=CRL|TSA
+NODE_RED_CREDENTIAL_SECRET=unused-value
+NODE_RED_UI_HOST=0.0.0.0
+NODE_RED_LOGGING_CONSOLE_LEVEL=info
+----
+
+Create `podman(1)` container:
+
+[source,sh]
+----
+# podman create -p 80:1880 -p 3180:318 --env-file tsu.env \
+                -it --hostname "tsu-1.tsa.my.corp" --name tsu-1 \
+                -v "$(pwd)/Root:/data/Root" \
+                registry.gitlab.com/platynum/certification-authority/container
+----
+
+Create a `systemd(8)` service for container:
+
+[source,sh]
+----
+# podman generate systemd tsu-1 > /etc/systemd/system/tsu.service
+----
+
+### Bind service to NTP-drift
+
+./etc/systemd/system/ntpstat.timer
+----
+include:ntpstat.timer[]
+----
+
+./etc/systemd/system/ntpstat.service
+----
+include:ntpstat.service[]
+----
+
+[source,sh]
+----
+# systemctl daemon-reload
+# systemctl enable --now ntpstat.timer
+# systemctl start ntpstat.timer
+----
+
+Verify, that the time stamping unit has been started:
+
+[source,sh]
+----
+# systemctl status ntpstat.service tsu.service
+----
+
+## Test Timestamping Unit
+
+Create a timestamp request:
+
+[source,sh]
+----
+$ openssl ts -query -data tsu-1.env -out ts.req
+----
+
+Post timestamp request:
+
+[source,sh]
+----
+$ curl -s -S -H 'Content-Type: application/timestamp-query' \
+       --data-binary @ts.req http://localhost/tsa/Root > ts.res
+----
+
+Verify the timestamp reply:
+
+[source,sh]
+----
+$ openssl ts -reply -in ts.res -text
+----
+

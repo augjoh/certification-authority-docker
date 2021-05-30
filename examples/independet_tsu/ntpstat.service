@@ -1,0 +1,10 @@
+[Unit]
+Description=Start/stop TSU when clock is (not) synchronised
+Documentation=man:ntpstat
+
+[Service]
+ExecStart=sh -c "if ntpstat -m 100; then systemctl start tsu.service; else systemctl stop tsu.service; fi"
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
