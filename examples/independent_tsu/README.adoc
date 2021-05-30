@@ -20,7 +20,7 @@ units on an offline system:
 
 .tsu-setup.sh
 ----
-include:tsu-setup.sh[]
+include::tsu-setup.sh[]
 ----
 
 [source,sh]
@@ -87,12 +87,12 @@ Create a `systemd(8)` service for container:
 
 ./etc/systemd/system/ntpstat.timer
 ----
-include:ntpstat.timer[]
+include::ntpstat.timer[]
 ----
 
 ./etc/systemd/system/ntpstat.service
 ----
-include:ntpstat.service[]
+include::ntpstat.service[]
 ----
 
 [source,sh]
