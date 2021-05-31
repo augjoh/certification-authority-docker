@@ -1,8 +1,8 @@
 FROM node:lts-alpine AS base
 
 LABEL org.opencontainers.image.url="https://registry.gitlab.com/platynum/certification-authority/container" \
-org.opencontainers.image.documentation="https://platynum.gitlab.io/certification-authority/documentation/" \
-org.opencontainers.image.source="https://gitlab.com/platynum/certification-authority/container" \
+      org.opencontainers.image.documentation="https://platynum.gitlab.io/certification-authority/documentation/" \
+      org.opencontainers.image.source="https://gitlab.com/platynum/certification-authority/container" \
       org.opencontainers.image.version="0.8.0" \
       org.opencontainers.image.vendor="https://platynum.ch/" \
       org.opencontainers.image.licenses="AGPL-3.0" \
@@ -25,7 +25,7 @@ RUN set -ex && \
     mkdir -p /usr/src/node-red /data && \
     deluser --remove-home node && \
     adduser -h /usr/src/node-red -D -H node-red -u 1000 && \
-    curl -o /data/public_suffix_list.dat https://publicsuffix.org/list/public_suffix_list.dat && \
+    curl --remote-time -o /data/public_suffix_list.dat https://publicsuffix.org/list/public_suffix_list.dat && \
     chown -R node-red:node-red /data
     # chmod -R g+rwX /data && \
     # chown -R node-red:root /usr/src/node-red && chmod -R g+rwX /usr/src/node-red
