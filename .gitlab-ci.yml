@@ -110,7 +110,7 @@ ocsp:
     - sleep 120
     - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
     - curl http://${HOSTNAME}/download/Sub/ca.crt.pem > sub.crt.pem
-    - openssl s_client -showcerts -connect ${HOSTNAME}:443 < /dev/null | openssl x509 > https.crt.pem
+    - openssl s_client -CAfile root.crt.pem -showcerts -connect ${HOSTNAME}:443 < /dev/null | openssl x509 > https.crt.pem
     - openssl x509 -in https.crt.pem -noout -text
   script:
     - openssl ocsp -CAfile root.crt.pem -issuer sub.crt.pem -trust_other -cert https.crt.pem -url $(openssl x509 -in https.crt.pem -noout -ocsp_uri)
