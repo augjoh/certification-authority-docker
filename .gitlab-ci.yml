@@ -191,7 +191,7 @@ tsa:
   stage: test
   before_script:
     - pacman --noconfirm -Syu
-    - pacman --noconfirm -Sy openssl curl nodejs npm
+    - pacman --noconfirm -Sy openssl curl
     - sleep 120
     - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
   script:
