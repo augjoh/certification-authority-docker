@@ -1,9 +1,11 @@
 FROM node:lts-alpine AS base
 
+ARG GIT_COMMIT="unknown"
 LABEL org.opencontainers.image.url="https://registry.gitlab.com/platynum/certification-authority/container" \
       org.opencontainers.image.documentation="https://platynum.gitlab.io/certification-authority/documentation/" \
       org.opencontainers.image.source="https://gitlab.com/platynum/certification-authority/container" \
       org.opencontainers.image.version="0.8.0" \
+      org.opencontainers.image.revision="$GIT_COMMIT" \
       org.opencontainers.image.vendor="https://platynum.ch/" \
       org.opencontainers.image.licenses="AGPL-3.0" \
       org.opencontainers.image.title="platynum certification authority" \
