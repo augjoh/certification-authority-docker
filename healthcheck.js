@@ -33,7 +33,7 @@ if (process.env['CONTAINER_ENABLE_APACHE'] !== 'false') {
         }
     };
     if (user && pass)
-	httpsOption.auth = user + ':' + pass;
+        httpsOption.auth = user + ':' + pass;
     request = https.request(httpsOptions, check_response);
 }
 else {
@@ -45,7 +45,7 @@ else {
         timeout: 4000
     };
     if (user && pass)
-	httpOptions.auth = user + ':' + pass;
+        httpOptions.auth = user + ':' + pass;
     request = http.request(httpOptions, check_response);
 }
 
