@@ -41,7 +41,7 @@ WORKDIR /usr/src/node-red
 ENV NODE_PATH=/usr/src/node-red/node_modules:/data/node_modules \
     FLOWS=flows.json
 
-COPY --chown=node-red:node-red settings.js /data/settings.js
+COPY --chown=node-red:node-red flows/settings.js /data/settings.js
 COPY --chown=node-red:node-red flows/flows.json /data/flows.json
 
 COPY flows/package.json flows/package-lock.json /usr/src/node-red/
