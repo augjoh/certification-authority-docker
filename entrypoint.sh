@@ -67,4 +67,4 @@ if [ -n "${CONTAINER_ENABLE_FLOWS}" ]; then
              select(.type != \"tab\") ]" "${DATADIR}/${FLOWS}.bck" > "${DATADIR}/${FLOWS}"
 fi
 
-exec su -c "node $NODE_OPTIONS /usr/src/node-red/node_modules/node-red/red.js --userDir /data $FLOWS" node-red
+exec su -c "node ${NODE_OPTIONS} /usr/src/node-red/node_modules/node-red/red.js --userDir ${DATADIR} ${FLOWS}" node-red
