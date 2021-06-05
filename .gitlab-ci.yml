@@ -183,6 +183,13 @@ websocket:
     - "echo 'I am groot' | curl --cacert root.crt.pem --location --include --no-buffer --header 'Connection: Upgrade' --header 'Upgrade: websocket' --header 'Host: ${HOSTNAME}' --header 'Origin: ${HOSTNAME}' --header 'Sec-WebSocket-Key: $(openssl rand 16 | openssl enc -base64)' --header 'Sec-WebSocket-Version: 13' https://${HOSTNAME}/admin/comms"
   when: manual
 
+audit:
+  image: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
+  stage: test
+  script:
+    - npm audit
+  allow_failure: true
+
 tsa:
   image: archlinux:latest
   services:
