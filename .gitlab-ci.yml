@@ -183,7 +183,9 @@ websocket:
   when: manual
 
 audit:
-  image: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
+  image:
+    name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
+    entrypoint: ["/bin/sh", "-c"]
   stage: test
   script:
     - npm audit
