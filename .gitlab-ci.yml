@@ -190,7 +190,7 @@ audit:
   script:
     - cd /usr/src/node-red
     - ls -l
-    - npm audit
+    - npm audit --production
   allow_failure: true
 
 tsa:
