@@ -13,7 +13,7 @@ apache2() {
         sleep 3
     done
 
-    while ! find "${DATADIR}/Admin/" -name ca.crt.pem >/dev/null 2>&1; do
+    while ! find "${DATADIR}/Admin/crls/" -name crl.pem >/dev/null 2>&1; do
         sleep 3
     done
 
