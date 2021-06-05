@@ -188,6 +188,8 @@ audit:
     entrypoint: ["/bin/sh", "-c"]
   stage: test
   script:
+    - cd /usr/src/node-red
+    - ls -l
     - npm audit
   allow_failure: true
 
