@@ -166,7 +166,6 @@ ui:
     - ls -lR /builds/{Admin,Root,Sub}
     - echo curl -L -v --cacert /builds/Root/certificates/*/ca.crt.pem --key /builds/Admin/keys/*/???*.priv.key.pem --cert /builds/Admin/certificates/*/???*.crt.pem https://${HOSTNAME}/
     - curl -L -v --cacert /builds/Root/certificates/*/ca.crt.pem --key /builds/Admin/keys/*/???*.priv.key.pem --cert /builds/Admin/certificates/*/???*.crt.pem https://${HOSTNAME}/
-  allow_failure: true
 
 websocket:
   image: debian:latest
