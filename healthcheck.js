@@ -33,7 +33,7 @@ if (process.env['CONTAINER_ENABLE_APACHE'] !== 'false') {
         }
     };
     if (user && pass)
-        httpsOption.auth = user + ':' + pass;
+        httpsOptions.auth = user + ':' + pass;
     request = https.request(httpsOptions, check_response);
 }
 else {
