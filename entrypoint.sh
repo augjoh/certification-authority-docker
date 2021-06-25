@@ -9,7 +9,11 @@ cd "${DATADIR}" || exit 1
 apache2() {
     APACHE2_SSL_CONF=/etc/apache2/conf.d/ssl.conf
 
-    while [ ! -f "${DATADIR}/Sub/https/https.crt.pem" ]; do
+    while [ ! -f "${DATADIR}/Sub/https/https-EC.crt.pem" ]; do
+        sleep 3
+    done
+
+    while [ ! -f "${DATADIR}/Sub/https/https-RSA.crt.pem" ]; do
         sleep 3
     done
 
