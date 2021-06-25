@@ -57,8 +57,10 @@ HEALTHCHECK --start-period=120s \
 COPY httpd.conf /etc/apache2/httpd.conf
 COPY httpd-ssl.conf /etc/apache2/conf.d/ssl.conf
 RUN rm -f /etc/ssl/apache2/server.{key,pem} \
- && ln -sf /data/Sub/https/https.crt.pem /etc/ssl/apache2/server.pem \
- && ln -sf /data/Sub/https/https.priv.key.pem /etc/ssl/apache2/server.key \
+ && ln -sf /data/Sub/https/https-RSA.crt.pem /etc/ssl/apache2/server.pem \
+ && ln -sf /data/Sub/https/https-EC.crt.pem /etc/ssl/apache2/server-ecc.pem \
+ && ln -sf /data/Sub/https/https-RSA.priv.key.pem /etc/ssl/apache2/server.key \
+ && ln -sf /data/Sub/https/https-EC.priv.key.pem /etc/ssl/apache2/server-ecc.key \
  && ln -sf /data/Sub/https/ca.crt.pem /etc/ssl/apache2/server-ca.pem
 
 # Expose the listening port of apache/node-red
