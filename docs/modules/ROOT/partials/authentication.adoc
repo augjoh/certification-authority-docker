@@ -35,9 +35,9 @@ highlighted password with an appropriate one.
 ----
 $ cd /data/Admin
 $ CAFILE=$(mktemp)
-$ cat */ca.crt.pem ../Root/*/ca.crt.pem >${CAFILE}
-$ openssl pkcs12 -in    ??[a-f0-9]*/??[a-f0-9]*.crt.pem \
-                 -inkey ??[a-f0-9]*/??[a-f0-9]*.priv.key.pem \
+$ cat certificates/*/ca.crt.pem ../Root/certificates/*/ca.crt.pem >${CAFILE}
+$ openssl pkcs12 -in    certificates/??[a-f0-9]*/??[a-f0-9]*.crt.pem \
+                 -inkey keys/??[a-f0-9]*/??[a-f0-9]*.priv.key.pem \
                  -export -out Admin.pfx -chain -CAfile ${CAFILE} -password pass:##password##
 $ rm ${CAFILE}
 ----
