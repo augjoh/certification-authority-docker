@@ -164,6 +164,8 @@ ui:
     - sleep 120
   script:
     - ls -lR /builds/{Admin,Root,Sub}
+    - openssl x509 -noout -text -in /builds/Root/certificates/*/ca.crt.pem -nameopt multiline,show_type -certopt no_sigdump
+    - openssl x509 -noout -text -in /builds/Admin/certificates/*/???*.crt.pem -nameopt multiline,show_type -certopt no_sigdump
     - echo curl -L -v --cacert /builds/Root/certificates/*/ca.crt.pem --key /builds/Admin/keys/*/???*.priv.key.pem --cert /builds/Admin/certificates/*/???*.crt.pem https://${HOSTNAME}/
     - curl -L -v --cacert /builds/Root/certificates/*/ca.crt.pem --key /builds/Admin/keys/*/???*.priv.key.pem --cert /builds/Admin/certificates/*/???*.crt.pem https://${HOSTNAME}/
 
