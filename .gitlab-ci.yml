@@ -7,7 +7,7 @@ variables:
   GIT_SUBMODULE_STRATEGY: normal
   HOSTNAME: nodejs.rz-bsd.my.corp
   FF_NETWORK_PER_BUILD: 1
-  ${INITIALIZATION_TIME}: 180
+  INITIALIZATION_TIME: 180
 
 include:
   - template: Security/SAST.gitlab-ci.yml
