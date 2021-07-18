@@ -9,11 +9,15 @@ cd "${DATADIR}" || exit 1
 apache2() {
     APACHE2_SSL_CONF=/etc/apache2/conf.d/ssl.conf
 
-    while [ ! -f "${DATADIR}/Sub/https/https.crt.pem" ]; do
+    while [ ! -f "${DATADIR}/Sub/https/https-EC.crt.pem" ]; do
         sleep 3
     done
 
-    while ! find "${DATADIR}/Admin/" -name ca.crt.pem >/dev/null 2>&1; do
+    while [ ! -f "${DATADIR}/Sub/https/https-RSA.crt.pem" ]; do
+        sleep 3
+    done
+
+    while ! find "${DATADIR}/Admin/crls/" -name crl.pem >/dev/null 2>&1; do
         sleep 3
     done
 
@@ -67,4 +71,4 @@ if [ -n "${CONTAINER_ENABLE_FLOWS}" ]; then
              select(.type != \"tab\") ]" "${DATADIR}/${FLOWS}.bck" > "${DATADIR}/${FLOWS}"
 fi
 
-exec su -c "node $NODE_OPTIONS /usr/src/node-red/node_modules/node-red/red.js --userDir /data $FLOWS" node-red
+exec su -c "node ${NODE_OPTIONS} /usr/src/node-red/node_modules/node-red/red.js --userDir ${DATADIR} ${FLOWS}" node-red

@@ -41,7 +41,7 @@ WORKDIR /usr/src/node-red
 ENV NODE_PATH=/usr/src/node-red/node_modules:/data/node_modules \
     FLOWS=flows.json
 
-COPY --chown=node-red:node-red settings.js /data/settings.js
+COPY --chown=node-red:node-red flows/settings.js /data/settings.js
 COPY --chown=node-red:node-red flows/flows.json /data/flows.json
 
 COPY flows/package.json flows/package-lock.json /usr/src/node-red/
@@ -57,8 +57,10 @@ HEALTHCHECK --start-period=120s \
 COPY httpd.conf /etc/apache2/httpd.conf
 COPY httpd-ssl.conf /etc/apache2/conf.d/ssl.conf
 RUN rm -f /etc/ssl/apache2/server.{key,pem} \
- && ln -sf /data/Sub/https/https.crt.pem /etc/ssl/apache2/server.pem \
- && ln -sf /data/Sub/https/https.priv.key.pem /etc/ssl/apache2/server.key \
+ && ln -sf /data/Sub/https/https-RSA.crt.pem /etc/ssl/apache2/server.pem \
+ && ln -sf /data/Sub/https/https-EC.crt.pem /etc/ssl/apache2/server-ecc.pem \
+ && ln -sf /data/Sub/https/https-RSA.priv.key.pem /etc/ssl/apache2/server.key \
+ && ln -sf /data/Sub/https/https-EC.priv.key.pem /etc/ssl/apache2/server-ecc.key \
  && ln -sf /data/Sub/https/ca.crt.pem /etc/ssl/apache2/server-ca.pem
 
 # Expose the listening port of apache/node-red

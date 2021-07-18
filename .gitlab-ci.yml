@@ -7,6 +7,7 @@ variables:
   GIT_SUBMODULE_STRATEGY: normal
   HOSTNAME: nodejs.rz-bsd.my.corp
   FF_NETWORK_PER_BUILD: 1
+  INITIALIZATION_TIME: 180
 
 include:
   - template: Security/SAST.gitlab-ci.yml
@@ -21,7 +22,7 @@ container:
     - dnf install -y buildah
     - buildah login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" "${CI_REGISTRY}"
   script:
-    - buildah bud --isolation chroot -f Dockerfile --build-arg GIT_COMMIT="${CI_COMMIT_SHA}" -t "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}" .
+    - buildah bud --format docker --isolation chroot -f Dockerfile --build-arg GIT_COMMIT="${CI_COMMIT_SHA}" -t "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}" .
     - buildah push "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
 #  rules:
 #    - changes:
@@ -44,7 +45,7 @@ downloads:
   before_script:
     - apt-get -q update
     - apt-get -q install -y curl
-    - sleep 120
+    - sleep ${INITIALIZATION_TIME}
   script:
     - curl -v http://${HOSTNAME}/
     - curl -v http://${HOSTNAME}/download/Root/ca.crt.pem
@@ -58,7 +59,7 @@ chain:
   before_script:
     - apt-get -q update
     - apt-get -q install -y curl openssl
-    - sleep 120
+    - sleep ${INITIALIZATION_TIME}
   script:
     - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
     - openssl x509 -in root.crt.pem -noout -fingerprint -sha256
@@ -74,7 +75,7 @@ crls:
   before_script:
     - apt-get -q update
     - apt-get -q install -y curl openssl
-    - sleep 120
+    - sleep ${INITIALIZATION_TIME}
   script:
     - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
     - curl http://${HOSTNAME}/download/Sub/ca.crt.pem > sub.crt.pem
@@ -107,10 +108,10 @@ ocsp:
   before_script:
     - apt-get update
     - apt-get install -y curl openssl
-    - sleep 120
+    - sleep ${INITIALIZATION_TIME}
     - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
     - curl http://${HOSTNAME}/download/Sub/ca.crt.pem > sub.crt.pem
-    - openssl s_client -showcerts -connect ${HOSTNAME}:443 < /dev/null | openssl x509 > https.crt.pem
+    - openssl s_client -CAfile root.crt.pem -showcerts -connect ${HOSTNAME}:443 < /dev/null | openssl x509 > https.crt.pem
     - openssl x509 -in https.crt.pem -noout -text
   script:
     - openssl ocsp -CAfile root.crt.pem -issuer sub.crt.pem -trust_other -cert https.crt.pem -url $(openssl x509 -in https.crt.pem -noout -ocsp_uri)
@@ -124,7 +125,7 @@ metrics:
   before_script:
     - apt-get update
     - apt-get install -y curl prometheus
-    - sleep 120
+    - sleep ${INITIALIZATION_TIME}
     - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
   script:
     - curl -vv --cacert root.crt.pem -o metrics.prom https://${HOSTNAME}/metrics
@@ -142,10 +143,11 @@ https:
   before_script:
     - apt-get -q update
     - apt-get -q install -y curl openssl testssl.sh
-    - sleep 120
+    - sleep ${INITIALIZATION_TIME}
     - curl http://${HOSTNAME}/download/Root/ca.crt.pem > "${ADDITIONAL_CA_FILES}"
   script:
-    - openssl s_client -showcerts -CAfile "${ADDITIONAL_CA_FILES}" -connect ${HOSTNAME}:443 </dev/null
+    - openssl s_client -cipher ECDHE-RSA-AES256-GCM-SHA384 -showcerts -CAfile "${ADDITIONAL_CA_FILES}" -servername "${HOSTNAME}" -connect ${HOSTNAME}:443 </dev/null || true
+    - openssl s_client -cipher ECDSA -showcerts -CAfile "${ADDITIONAL_CA_FILES}" -servername "${HOSTNAME}" -connect ${HOSTNAME}:443 </dev/null
     - openssl s_client -showcerts -connect ${HOSTNAME}:443 | openssl x509 -noout -text
     - testssl --debug 2 https://${HOSTNAME}/ || echo "testssl exit code $?"
 
@@ -161,12 +163,13 @@ ui:
   before_script:
     - apt-get -q update
     - apt-get -q install -y curl openssl
-    - sleep 120
+    - sleep ${INITIALIZATION_TIME}
   script:
     - ls -lR /builds/{Admin,Root,Sub}
+    - openssl x509 -noout -text -in /builds/Root/certificates/*/ca.crt.pem -nameopt multiline,show_type -certopt no_sigdump
+    - openssl x509 -noout -text -in /builds/Admin/certificates/*/???*.crt.pem -nameopt multiline,show_type -certopt no_sigdump
     - echo curl -L -v --cacert /builds/Root/certificates/*/ca.crt.pem --key /builds/Admin/keys/*/???*.priv.key.pem --cert /builds/Admin/certificates/*/???*.crt.pem https://${HOSTNAME}/
     - curl -L -v --cacert /builds/Root/certificates/*/ca.crt.pem --key /builds/Admin/keys/*/???*.priv.key.pem --cert /builds/Admin/certificates/*/???*.crt.pem https://${HOSTNAME}/
-  allow_failure: true
 
 websocket:
   image: debian:latest
@@ -177,11 +180,22 @@ websocket:
   before_script:
     - apt-get -q update
     - apt-get -q install -y curl openssl
-    - sleep 120
+    - sleep ${INITIALIZATION_TIME}
     - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
   script:
     - "echo 'I am groot' | curl --cacert root.crt.pem --location --include --no-buffer --header 'Connection: Upgrade' --header 'Upgrade: websocket' --header 'Host: ${HOSTNAME}' --header 'Origin: ${HOSTNAME}' --header 'Sec-WebSocket-Key: $(openssl rand 16 | openssl enc -base64)' --header 'Sec-WebSocket-Version: 13' https://${HOSTNAME}/admin/comms"
   when: manual
+
+audit:
+  image:
+    name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
+    entrypoint: ["/bin/sh", "-c"]
+  stage: test
+  script:
+    - cd /usr/src/node-red
+    - ls -l
+    - npm audit --production
+  allow_failure: true
 
 tsa:
   image: archlinux:latest
@@ -191,8 +205,8 @@ tsa:
   stage: test
   before_script:
     - pacman --noconfirm -Syu
-    - pacman --noconfirm -Sy openssl curl nodejs npm
-    - sleep 120
+    - pacman --noconfirm -Sy openssl curl
+    - sleep ${INITIALIZATION_TIME}
     - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
   script:
     - dd if=/dev/urandom of=data.bin bs=1 count=512
@@ -212,7 +226,7 @@ acme:
   before_script:
     - apt-get -q update
     - apt-get -q install -y certbot curl
-    - sleep 120
+    - sleep ${INITIALIZATION_TIME}
     - curl http://${HOSTNAME}/download/Root/ca.crt.pem > root.crt.pem
     - curl http://${HOSTNAME}/download/Sub/ca.crt.pem > sub.crt.pem
   script:
