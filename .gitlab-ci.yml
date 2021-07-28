@@ -147,7 +147,7 @@ https:
     - curl http://${HOSTNAME}/download/Root/ca.crt.pem > "${ADDITIONAL_CA_FILES}"
   script:
     - openssl s_client -cipher ECDHE-RSA-AES256-GCM-SHA384 -showcerts -CAfile "${ADDITIONAL_CA_FILES}" -servername "${HOSTNAME}" -connect ${HOSTNAME}:443 </dev/null || true
-    - openssl s_client -cipher ECDSA -showcerts -CAfile "${ADDITIONAL_CA_FILES}" -servername "${HOSTNAME}" -connect ${HOSTNAME}:443 </dev/null
+    - openssl s_client -cipher ECDHE-ECDSA-AES256-GCM-SHA384 -showcerts -CAfile "${ADDITIONAL_CA_FILES}" -servername "${HOSTNAME}" -connect ${HOSTNAME}:443 </dev/null
     - openssl s_client -showcerts -connect ${HOSTNAME}:443 | openssl x509 -noout -text
     - testssl --debug 2 https://${HOSTNAME}/ || echo "testssl exit code $?"
 
@@ -195,7 +195,7 @@ audit:
     - cd /usr/src/node-red
     - ls -l
     - npm audit --production
-  allow_failure: true
+  # allow_failure: true
 
 tsa:
   image: archlinux:latest
