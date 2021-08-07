@@ -1,0 +1,74 @@
+= Container based installation
+
+To run the certification authority in a container, you'll have to install
+a container runtime first. While it is possible to run the container inside
+kubernetes or Apache Mesos, we are going to stick with a simpler solution
+here.
+
+== Install container runtime
+
+The container runtime available depends on your operating system and
+distribution. It is recommended to use the container runtime preferred by
+your distribution.
+
+[tabs]
+====
+Debian/Ubuntu::
++
+--
+[source,bash]
+----
+# apt-get install docker.io
+----
+--
+CentOS::
++
+--
+[source,bash]
+----
+# dnf install podman
+----
+--
+SuSE::
++
+--
+[source,bash]
+----
+# zypper install docker
+----
+--
+====
+
+== Launch certification authority
+
+[tabs]
+====
+docker::
++
+--
+[source,bash]
+----
+# docker run -e HOSTNAME=<fqdn> \
+             -e BASE_DN=<distinguished-name> \
+             -p 80:80 -p 443:443 -p 318:3180 \
+             registry.gitlab.com/platynum/certification-authority/container
+----
+--
+podman::
++
+--
+[source,bash]
+----
+# podman run -e HOSTNAME=<fqdn> \
+             -e BASE_DN=<distinguished-name> \
+             -p 80:80 -p 443:443 -p 318:3180 \
+             registry.gitlab.com/platynum/certification-authority/container
+----
+--
+====
+
+Replace `<fqdn>` with your full-qualified domain name, and
+`<distinguished-name>` with a suitable distinguished name (e.g.
+`/C=BG/O=My.Corp/OU=PKI Services`). Your node should be reachable
+using the full-qualified domain name from all clients.
+
