@@ -194,8 +194,9 @@ audit:
   script:
     - cd /usr/src/node-red
     - ls -l
-    - npm audit --production
-  # allow_failure: true
+    - npm audit --production || true
+    - npm audit fix
+  allow_failure: true
 
 tsa:
   image: archlinux:latest
