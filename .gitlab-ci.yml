@@ -14,12 +14,11 @@ include:
 #  - template: Container-Scanning.gitlab-ci.yml
 
 container:
-  image: centos:latest
+  image: quay.io/buildah/stable
   stage: build
   variables:
     STORAGE_DRIVER: vfs
   before_script:
-    - dnf install -y buildah
     - buildah login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" "${CI_REGISTRY}"
   script:
     - buildah bud --format docker --isolation chroot -f Dockerfile --build-arg GIT_COMMIT="${CI_COMMIT_SHA}" -t "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}" .
