@@ -265,6 +265,7 @@ gitlab:
 
 heroku:
   image: quay.io/containers/skopeo
+  resource_group: heroku
   stage: release
   script:
     - "echo copy from docker://${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID} to docker://registry.heroku.com/platynum/web"
