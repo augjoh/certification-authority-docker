@@ -261,6 +261,7 @@ gitlab:
     - buildah manifest create list
     - buildah manifest add list "${CI_REGISTRY_IMAGE}/amd64:${CI_PIPELINE_ID}"
     - buildah manifest add list "${CI_REGISTRY_IMAGE}/arm:${CI_PIPELINE_ID}"
+    - buildah manifest inspect list
     - buildah manifest push --format=v2s2 --all list "docker://${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG/${CI_DEFAULT_BRANCH}/latest}"
   after_script:
     - buildah logout
