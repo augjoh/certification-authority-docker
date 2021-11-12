@@ -20,6 +20,8 @@ Debian/Ubuntu::
 ----
 # apt-get install docker.io
 ----
+Please consult link:https://docs.docker.com/engine/install/ubuntu/[the
+official Docker installation documentation] if you experience and problems.
 --
 CentOS::
 +

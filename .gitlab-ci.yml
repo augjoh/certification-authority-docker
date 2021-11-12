@@ -14,12 +14,11 @@ include:
 #  - template: Container-Scanning.gitlab-ci.yml
 
 container:
-  image: centos:latest
+  image: quay.io/buildah/stable
   stage: build
   variables:
     STORAGE_DRIVER: vfs
   before_script:
-    - dnf install -y buildah
     - buildah login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" "${CI_REGISTRY}"
   script:
     - buildah bud --format docker --isolation chroot -f Dockerfile --build-arg GIT_COMMIT="${CI_COMMIT_SHA}" -t "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}" .
@@ -248,28 +247,25 @@ acme:
       - ${CERTBOT_DIR}/log/
 
 gitlab:
-  image: centos:latest
+  image: quay.io/buildah/stable
   stage: release
   variables:
     STORAGE_DRIVER: vfs
   before_script:
-    - dnf install -y buildah
     - buildah login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" "${CI_REGISTRY}"
   script:
     - buildah pull "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-    - buildah tag "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}" "$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_SLUG/master/latest}"
-    - buildah push "${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG/master/latest}"
+    - buildah tag "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}" "$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_SLUG/${CI_DEFAULT_BRANCH}/latest}"
+    - buildah push "${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG/${CI_DEFAULT_BRANCH}/latest}"
 
 heroku:
-  image: centos:latest
+  image: quay.io/containers/skopeo
   stage: release
-  before_script:
-    - dnf install -y skopeo
   script:
     - "echo copy from docker://${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID} to docker://registry.heroku.com/platynum/web"
     - "skopeo copy --src-creds=${CI_REGISTRY_USER}:${CI_REGISTRY_PASSWORD} --dest-creds=_:${HEROKU_AUTH_TOKEN} --format=v2s2 docker://${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID} docker://registry.heroku.com/platynum/web"
   environment:
     name: heroku
     url: https://acme.platynum.ch/admin
-  only:
-    - master
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == $CI_DEFAULT_BRANCH'
