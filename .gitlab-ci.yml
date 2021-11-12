@@ -261,7 +261,7 @@ gitlab:
     - buildah manifest create list
     - buildah manifest add list "${CI_REGISTRY_IMAGE}/amd64:${CI_PIPELINE_ID}"
     - buildah manifest add list "${CI_REGISTRY_IMAGE}/arm:${CI_PIPELINE_ID}"
-    - buildah manifest push list "${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG/${CI_DEFAULT_BRANCH}/latest}"
+    - buildah manifest push --all list "${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG/${CI_DEFAULT_BRANCH}/latest}"
 
 heroku:
   image: quay.io/containers/skopeo
