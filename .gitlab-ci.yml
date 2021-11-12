@@ -25,7 +25,7 @@ container:
     - buildah push "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
   parallel:
     matrix:
-      ARCH: ["amd64", "arm"]
+      - ARCH: ["amd64", "arm"]
 #  rules:
 #    - changes:
 #        - Dockerfile
