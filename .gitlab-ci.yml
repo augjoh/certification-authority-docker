@@ -258,9 +258,10 @@ gitlab:
   before_script:
     - buildah login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" "${CI_REGISTRY}"
   script:
-    - buildah pull "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-    - buildah tag "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}" "$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_SLUG/${CI_DEFAULT_BRANCH}/latest}"
-    - buildah push "${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG/${CI_DEFAULT_BRANCH}/latest}"
+    - buildah manifest create list
+    - buildah manifest add list "${CI_REGISTRY_IMAGE}/amd64:${CI_PIPELINE_ID}"
+    - buildah manifest add list "${CI_REGISTRY_IMAGE}/arm:${CI_PIPELINE_ID}"
+    - buildah manifest push list "${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG/${CI_DEFAULT_BRANCH}/latest}"
 
 heroku:
   image: quay.io/containers/skopeo
