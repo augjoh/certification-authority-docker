@@ -24,6 +24,8 @@ container:
     - buildah bud --arch "${ARCH}" --format docker --isolation chroot -f Dockerfile --build-arg GIT_COMMIT="${CI_COMMIT_SHA}" -t "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}" -t "${CI_REGISTRY_IMAGE}/${ARCH}:${CI_PIPELINE_ID}" .
     - if [ "${ARCH}" == "amd64" ]; then buildah push "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"; fi
     - buildah push "${CI_REGISTRY_IMAGE}/${ARCH}:${CI_PIPELINE_ID}"
+  after_script:
+    - buildah logout "${CI_REGISTRY}"
   parallel:
     matrix:
       - ARCH: ["amd64", "arm"]
@@ -255,6 +257,7 @@ gitlab:
   stage: release
   variables:
     STORAGE_DRIVER: vfs
+    GIT_STRATEGY: none
   before_script:
     - buildah login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" "${CI_REGISTRY}"
   script:
@@ -264,7 +267,7 @@ gitlab:
     - buildah manifest inspect list
     - buildah manifest push --format=v2s2 --all list "docker://${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG/${CI_DEFAULT_BRANCH}/latest}"
   after_script:
-    - buildah logout
+    - buildah logout "${CI_REGISTRY}"
 
 heroku:
   image: quay.io/containers/skopeo
