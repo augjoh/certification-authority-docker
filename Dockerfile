@@ -45,7 +45,7 @@ COPY --chown=node-red:node-red flows/settings.js /data/settings.js
 COPY --chown=node-red:node-red flows/flows.json /data/flows.json
 
 COPY flows/package.json flows/[p]ackage-lock.json flows/[n]pm-shrinkwrap.json /usr/src/node-red/
-RUN npm ci --production
+RUN npm ci --production && npm ls
 
 # Setup healthcheck
 COPY healthcheck.js /usr/bin/
