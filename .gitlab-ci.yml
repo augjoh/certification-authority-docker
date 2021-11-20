@@ -276,7 +276,7 @@ heroku:
   stage: deploy
   script:
     - "echo copy from docker://${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG/${CI_DEFAULT_BRANCH}/latest} to docker://registry.heroku.com/platynum/web"
-    - "skopeo copy --src-creds=${CI_REGISTRY_USER}:${CI_REGISTRY_PASSWORD} --dest-creds=_:${HEROKU_AUTH_TOKEN} --format=v2s2 docker://${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG/${CI_DEFAULT_BRANCH}/latest} docker://registry.heroku.com/platynum/web"
+    - "skopeo copy --all --src-creds=${CI_REGISTRY_USER}:${CI_REGISTRY_PASSWORD} --dest-creds=_:${HEROKU_AUTH_TOKEN} --format=v2s2 docker://${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG/${CI_DEFAULT_BRANCH}/latest} docker://registry.heroku.com/platynum/web"
   environment:
     name: heroku
     url: https://acme.platynum.ch/admin
