@@ -314,6 +314,9 @@ heroku:
     - buildah pull "docker://${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG/${CI_DEFAULT_BRANCH}/latest}"
     - buildah tag "${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG/${CI_DEFAULT_BRANCH}/latest}" "${HEROKU_REGISTRY}/platynum/web"
     - buildah push "${HEROKU_REGISTRY}/platynum/web"
+  after_script:
+    - buildah logout "${HEROKU_REGISTRY}"
+    - buildah logout "${CI_REGISTRY}"
   environment:
     name: heroku
     url: https://acme.platynum.ch/admin
