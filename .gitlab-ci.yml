@@ -271,7 +271,7 @@ gitlab:
     - buildah logout "${CI_REGISTRY}"
 
 heroku:
-  image: quay.io/containers/skopeo
+  image: quay.io/skopeo/stable
   resource_group: heroku
   stage: deploy
   script:
