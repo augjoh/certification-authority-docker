@@ -301,7 +301,7 @@ gitlab:
     - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == $CI_DEFAULT_BRANCH'
 
 heroku:
-  image: quay.io/buidah/stable
+  image: quay.io/buildah/stable
   resource_group: heroku
   stage: deploy
   variables:
