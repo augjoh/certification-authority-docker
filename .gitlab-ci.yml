@@ -20,6 +20,7 @@ container:
   variables:
     STORAGE_DRIVER: vfs
   before_script:
+    - if [ "${ARCH}" != "amd64" ]; then dnf -y install qemu-user-static; fi
     - buildah login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" "${CI_REGISTRY}"
   script:
     - buildah bud --arch "${ARCH}" --format docker --isolation chroot -f Dockerfile --build-arg GIT_COMMIT="${CI_COMMIT_SHA}" -t "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}" -t "${CI_REGISTRY_IMAGE}/${ARCH}:${CI_PIPELINE_ID}" .
@@ -314,6 +315,9 @@ heroku:
     - buildah pull "docker://${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG/${CI_DEFAULT_BRANCH}/latest}"
     - buildah tag "${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG/${CI_DEFAULT_BRANCH}/latest}" "${HEROKU_REGISTRY}/platynum/web"
     - buildah push "${HEROKU_REGISTRY}/platynum/web"
+  after_script:
+    - buildah logout "${HEROKU_REGISTRY}"
+    - buildah logout "${CI_REGISTRY}"
   environment:
     name: heroku
     url: https://acme.platynum.ch/admin
