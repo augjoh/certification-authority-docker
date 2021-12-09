@@ -43,9 +43,12 @@ ENV NODE_PATH=/usr/src/node-red/node_modules:/data/node_modules \
 
 COPY --chown=node-red:node-red flows/settings.js /data/settings.js
 COPY --chown=node-red:node-red flows/flows.json /data/flows.json
+RUN chmod 644 /data/flows.json && \
+  chmod 644 /data/settings.js
 
 COPY flows/package.json flows/[p]ackage-lock.json flows/[n]pm-shrinkwrap.json /usr/src/node-red/
-RUN npm ci --production
+RUN chmod 644 /usr/src/node-red/*.json && \
+  npm ci --production
 
 # Setup healthcheck
 COPY healthcheck.js /usr/bin/
