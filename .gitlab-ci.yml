@@ -23,14 +23,17 @@ container:
     - if [ "${ARCH}" != "amd64" ]; then dnf -y install qemu-user-static; fi
     - buildah login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" "${CI_REGISTRY}"
   script:
-    - buildah bud --arch "${ARCH}" --format docker --isolation chroot -f Dockerfile --build-arg GIT_COMMIT="${CI_COMMIT_SHA}" -t "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}" -t "${CI_REGISTRY_IMAGE}/${ARCH}:${CI_PIPELINE_ID}" .
+    - buildah bud --arch "${ARCH}" --variant "${VARIANT}" --format docker --isolation chroot -f Dockerfile --build-arg GIT_COMMIT="${CI_COMMIT_SHA}" -t "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}" -t "${CI_REGISTRY_IMAGE}/${ARCH}:${CI_PIPELINE_ID}" .
     - if [ "${ARCH}" == "amd64" ]; then buildah push "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"; fi
     - buildah push "${CI_REGISTRY_IMAGE}/${ARCH}:${CI_PIPELINE_ID}"
   after_script:
     - buildah logout "${CI_REGISTRY}"
   parallel:
     matrix:
-      - ARCH: ["amd64", "arm", "aarch64"]
+      - ARCH: ["amd64", "arm"]
+        VARIANT: [""]
+      - ARCH: ["arm64"]
+        VARIANT: ["v8"]
 #  rules:
 #    - changes:
 #        - Dockerfile
@@ -283,7 +286,7 @@ gitlab:
     - buildah manifest create list
     - buildah manifest add list "${CI_REGISTRY_IMAGE}/amd64:${CI_PIPELINE_ID}"
     - buildah manifest add list "${CI_REGISTRY_IMAGE}/arm:${CI_PIPELINE_ID}"
-    - buildah manifest add list "${CI_REGISTRY_IMAGE}/aarch64:${CI_PIPELINE_ID}"
+    - buildah manifest add --variant "v8" list "${CI_REGISTRY_IMAGE}/arm64:${CI_PIPELINE_ID}"
     - buildah manifest inspect list
     - buildah manifest push --format=v2s2 --all list "docker://${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_SLUG/${CI_DEFAULT_BRANCH}/latest}"
 
