@@ -48,7 +48,7 @@ RUN chmod 644 /data/flows.json && \
 
 COPY flows/package.json flows/[p]ackage-lock.json flows/[n]pm-shrinkwrap.json /usr/src/node-red/
 RUN chmod 644 /usr/src/node-red/*.json && \
-  npm ci --production
+  npm ci --production --no-optional
 
 # Setup healthcheck
 COPY healthcheck.js /usr/bin/
