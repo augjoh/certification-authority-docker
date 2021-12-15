@@ -106,7 +106,10 @@ $ podman pull ${IMAGE}
 
 === Non x86-64 images
 
-There are unofficial docker images on
+The registry hosted at gitlab.com provides container images for `amd64`, `arm`,
+and `aarch64`.
+
+There are additional unofficial docker images on
 `https://hub.docker.com/r/platynum/certification-authority`
 which run on BeagleBone, Raspberry PI, and other ARM- or i686-based
 hardware. These images are rebuilt daily.
