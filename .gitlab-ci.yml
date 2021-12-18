@@ -157,6 +157,7 @@ https:
     PHONE_OUT: "true"
     ADDITIONAL_CA_FILES: "root.crt.pem"
     GIT_STRATEGY: none
+    APACHE_OCSP_STAPLING: "true"
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
       alias: nodejs.rz-bsd.my.corp
