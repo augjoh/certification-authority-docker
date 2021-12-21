@@ -1,12 +1,19 @@
 == Container
 
 `CONTAINER_ENABLE_APACHE`::
-  start Apache 2 in front of Node-RED, set this to `false` to disable
+  start Apache httpd 2 in front of Node-RED, set this to `false` to disable
   the built in reverse proxy and authentication, by default this value
   is unset.
 `CONTAINER_ENABLE_FLOWS`::
   by default all flows are enabled and started, you can select a subset
   of flows, by using a regex here, e.g.: `OCSP|CRL`.
+
+== Apache httpd
+
+`APACHE_OCSP_STAPLING`::
+  enable OCSP stapling within apache httpd reverse proxy using the
+  `SSLUseStapling` configuration option, when specified as `true`. By default
+  OCSP stapling is disabled.
 
 == Node-RED
 

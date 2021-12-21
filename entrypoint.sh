@@ -47,7 +47,11 @@ apache2() {
         ln -sf "${crl}" "${SSLCARevocationPath}/${hash}.r0"
     done
 
-    /usr/sbin/httpd -k start
+    APACHE_DEFINES=""
+    if [ "${APACHE_OCSP_STAPLING}" = "true" ]; then
+        APACHE_DEFINES="-DSSLUseStapling ${APACHE_DEFINES}"
+    fi
+    /usr/sbin/httpd ${APACHE_DEFINES} -k start
     sleep 5
     tail /var/log/apache2/*.log
 }
