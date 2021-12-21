@@ -15,6 +15,9 @@
   `SSLUseStapling` configuration option, when specified as `true`. By default
   OCSP stapling is disabled.
 
+TIP: You might want to enable `HTTPS_TLS_STATUS_REQUEST` x509v3 extension
+within the https certificates, too.
+
 == Node-RED
 
 Consult the
