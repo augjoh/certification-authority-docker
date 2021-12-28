@@ -174,7 +174,7 @@ https:
     - openssl s_client -showcerts -connect ${HOSTNAME}:443 | openssl x509 -noout -text
     - testssl --debug 2 https://${HOSTNAME}/
   allow_failure:
-    exit_codes: 1
+    exit_codes: 2
 
 ui:
   image: debian:bullseye
