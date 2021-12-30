@@ -1,8 +1,8 @@
 = TLS ALPN challenge
 
 The following configuration can be used for https://caddyserver.com/ on
-FreeBSD 13.0. It assumes, that you have a running Certification Authority
-(CA), already.
+https://www.freebsd.org/[FreeBSD 13.0]. It assumes, that you have a running
+Certification Authority (CA), already.
 
 Install `caddy` software:
 
@@ -25,24 +25,24 @@ certificate:
 [source]
 ----
 {
-	key_type p256
+  key_type p256
 }
 
 # Replace the following domain name with your FQDN
 caddy.rz-bsd.my.corp {
-	root * /usr/local/www/caddy
-	file_server
+  root * /usr/local/www/caddy
+  file_server
 
-	tls {
-		issuer acme {
+  tls {
+    issuer acme {
       # Specify the ACME directory URL here
-			dir https://nodejs.rz-bsd.my.corp/acme/Sub/directory
+      dir https://nodejs.rz-bsd.my.corp/acme/Sub/directory
       # Download CA root certificate from CA
-			trusted_roots /usr/local/etc/acme.root.pem
+      trusted_roots /usr/local/etc/acme.root.pem
       # Disable http challenge to use tls-alpn-01
-			disable_http_challenge
-		}
-	}
+      disable_http_challenge
+    }
+  }
 }
 ----
 
