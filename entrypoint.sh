@@ -53,7 +53,7 @@ apache2() {
     fi
     /usr/sbin/httpd ${APACHE_DEFINES} -k start
     sleep 5
-    tail /var/log/apache2/*.log
+    tail -q /var/log/apache2/*.log
 }
 
 if [ "${CONTAINER_ENABLE_APACHE}" != "false" ]; then
