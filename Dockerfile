@@ -24,10 +24,16 @@ RUN set -ex && \
         curl \
         openssl \
         openssh-client && \
-    mkdir -p /usr/src/node-red /data && \
+    mkdir -p /usr/src/node-red /data/ctlogs && \
     deluser --remove-home node && \
     adduser -h /usr/src/node-red -D -H node-red -u 1000 && \
     curl --remote-time -o /data/public_suffix_list.dat https://publicsuffix.org/list/public_suffix_list.dat && \
+    curl --remote-time -o /data/ctlogs/apple_log_list.json https://valid.apple.com/ct/log_list/current_log_list.json && \
+    curl --remote-time -o /data/ctlogs/chrome_log_list.json https://www.gstatic.com/ct/log_list/v3/log_list.json && \
+    curl --remote-time -o /data/ctlogs/chrome_log_list.sig https://www.gstatic.com/ct/log_list/v3/log_list.sig && \
+    curl -o /data/ctlogs/chromium_log_list.json.b64 'https://chromium.googlesource.com/chromium/src/+/main/components/certificate_transparency/data/log_list.json?format=TEXT' && \
+    sed 's/.\{72\}/&\n/g' /data/ctlogs/chromium_log_list.json.b64 | openssl enc -base64 -d -out /data/ctlogs/chromium_log_list.json && \
+    rm /data/ctlogs/chromium_log_list.json.b64 && \
     chown -R node-red:node-red /data
     # chmod -R g+rwX /data && \
     # chown -R node-red:root /usr/src/node-red && chmod -R g+rwX /usr/src/node-red
