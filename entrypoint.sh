@@ -57,7 +57,7 @@ apache2() {
 }
 
 if [ "${CONTAINER_ENABLE_APACHE}" != "false" ]; then
-    /usr/sbin/httpd -v
+    /usr/sbin/httpd -v | sed "s/^/$(date "+%d %b %H:%M:%S") - [info] /"
     # This creates a zombie
     apache2 &
 fi
