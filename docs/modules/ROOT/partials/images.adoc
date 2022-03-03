@@ -55,7 +55,8 @@ $ podman pull ${IMAGE}
 === Non x86-64 images
 
 There are unofficial docker images on
-`https://hub.docker.com/r/platynum/certification-authority`
+https://hub.docker.com/r/platynum/certification-authority[docker hub] and
+https://registry.gitlab.com/platynum/certification-authority/container[gitlab]
 which run on BeagleBone, Raspberry PI, and other ARM- or i686-based
 hardware. These images are rebuilt daily with the `master` branch of the
 flows.

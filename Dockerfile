@@ -24,7 +24,7 @@ RUN set -ex && \
         curl \
         openssl \
         openssh-client && \
-    mkdir -p /usr/src/node-red /data/ctlogs && \
+    mkdir -p /usr/src/node-red /data/ctlogs /data/scripts && \
     deluser --remove-home node && \
     adduser -h /usr/src/node-red -D -H node-red -u 1000 && \
     curl --remote-time -o /data/public_suffix_list.dat https://publicsuffix.org/list/public_suffix_list.dat && \
