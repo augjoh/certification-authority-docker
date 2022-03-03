@@ -31,9 +31,6 @@ RUN set -ex && \
     curl --remote-time -o /data/ctlogs/apple_log_list.json https://valid.apple.com/ct/log_list/current_log_list.json && \
     curl --remote-time -o /data/ctlogs/chrome_log_list.json https://www.gstatic.com/ct/log_list/v3/log_list.json && \
     curl --remote-time -o /data/ctlogs/chrome_log_list.sig https://www.gstatic.com/ct/log_list/v3/log_list.sig && \
-    curl -o /data/ctlogs/chromium_log_list.json.b64 'https://chromium.googlesource.com/chromium/src/+/main/components/certificate_transparency/data/log_list.json?format=TEXT' && \
-    sed 's/.\{72\}/&\n/g' /data/ctlogs/chromium_log_list.json.b64 | openssl enc -base64 -d -out /data/ctlogs/chromium_log_list.json && \
-    rm /data/ctlogs/chromium_log_list.json.b64 && \
     chown -R node-red:node-red /data
     # chmod -R g+rwX /data && \
     # chown -R node-red:root /usr/src/node-red && chmod -R g+rwX /usr/src/node-red
@@ -47,18 +44,14 @@ WORKDIR /usr/src/node-red
 ENV NODE_PATH=/usr/src/node-red/node_modules:/data/node_modules \
     FLOWS=flows.json
 
-COPY --chown=node-red:node-red flows/settings.js /data/settings.js
-COPY --chown=node-red:node-red flows/flows.json /data/flows.json
-RUN chmod 644 /data/flows.json && \
-  chmod 644 /data/settings.js
+COPY --chown=node-red:node-red --chmod=644 flows/settings.js /data/settings.js
+COPY --chown=node-red:node-red --chmod=644 flows/flows.json /data/flows.json
 
-COPY flows/package.json flows/[p]ackage-lock.json flows/[n]pm-shrinkwrap.json /usr/src/node-red/
-RUN chmod 644 /usr/src/node-red/*.json && \
-  npm ci --production --no-optional
+COPY --chmod=644 flows/package.json flows/[p]ackage-lock.json flows/[n]pm-shrinkwrap.json /usr/src/node-red/
+RUN npm ci --production --no-optional
 
 # Setup healthcheck
-COPY healthcheck.js /usr/bin/
-RUN chmod 755 /usr/bin/healthcheck.js
+COPY --chmod=755 healthcheck.js /usr/bin/
 HEALTHCHECK --start-period=120s \
     CMD /usr/bin/healthcheck.js
 
@@ -75,6 +68,5 @@ RUN rm -f /etc/ssl/apache2/server.{key,pem} \
 # Expose the listening port of apache/node-red
 EXPOSE 80 1880 3180 443
 
-COPY entrypoint.sh /usr/bin/
-RUN chmod 755 /usr/bin/entrypoint.sh
+COPY --chmod=755 entrypoint.sh /usr/bin/
 ENTRYPOINT ["/usr/bin/entrypoint.sh"]
