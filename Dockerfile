@@ -1,4 +1,4 @@
-FROM node:lts-alpine AS base
+FROM docker.io/library/node:lts-alpine AS base
 
 ARG GIT_COMMIT="unknown"
 LABEL org.opencontainers.image.url="https://registry.gitlab.com/platynum/certification-authority/container" \
