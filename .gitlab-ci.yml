@@ -18,8 +18,8 @@ container:
   image: quay.io/buildah/stable
   stage: build
   variables:
-    STORAGE_DRIVER: vfs
-    CONTAINERS_SHORT_NAME_ALIASING: on
+    STORAGE_DRIVER: "vfs"
+    CONTAINERS_SHORT_NAME_ALIASING: "on"
   before_script:
     - if [ "${ARCH}" != "amd64" ]; then dnf -y install qemu-user-static; fi
     - buildah login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" "${CI_REGISTRY}"
