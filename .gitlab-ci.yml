@@ -169,8 +169,8 @@ https 🌏:
     - echo -e "\e[0Ksection_start:$(date +%s):https_pre_requisites[collapsed=true]\r\e[0KInstall pre-requisites"
     - apt-get -q update
     - apt-get -q install -y curl openssl testssl.sh
-    - sleep ${INITIALIZATION_TIME}
     - echo -e "\e[0Ksection_end:$(date +%s):https_pre_requisites\r\e[0K"
+    - sleep ${INITIALIZATION_TIME}
     - curl http://${HOSTNAME}/download/Root/ca.crt.pem > "${ADDITIONAL_CA_FILES}"
   script:
     - openssl s_client -cipher ECDHE-RSA-AES256-GCM-SHA384 -showcerts -CAfile "${ADDITIONAL_CA_FILES}" -servername "${HOSTNAME}" -connect ${HOSTNAME}:443 </dev/null || true
