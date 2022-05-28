@@ -12,7 +12,11 @@ variables:
 
 include:
   - template: Security/SAST.gitlab-ci.yml
-#  - template: Container-Scanning.gitlab-ci.yml
+  - template: Container-Scanning.gitlab-ci.yml
+
+container_scanning:
+  variables:
+    CS_DEFAULT_BRANCH_IMAGE: $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
 
 container:
   image: quay.io/buildah/stable
