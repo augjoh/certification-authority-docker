@@ -16,7 +16,7 @@ include:
 
 container_scanning:
   variables:
-    CS_DEFAULT_BRANCH_IMAGE: $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
+    DOCKER_IMAGE: $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
 
 container:
   image: quay.io/buildah/stable
