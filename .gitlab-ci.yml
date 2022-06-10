@@ -56,7 +56,7 @@ downloads:
   image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: nodejs.rz-bsd.my.corp
+      alias: nodejs.dc-bsd.my.corp
   variables:
     GIT_STRATEGY: none
   stage: test
@@ -72,7 +72,7 @@ chain:
   image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: nodejs.rz-bsd.my.corp
+      alias: nodejs.dc-bsd.my.corp
   variables:
     GIT_STRATEGY: none
   stage: test
@@ -90,7 +90,7 @@ crls:
   image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: nodejs.rz-bsd.my.corp
+      alias: nodejs.dc-bsd.my.corp
   variables:
     GIT_STRATEGY: none
   stage: test
@@ -125,7 +125,7 @@ ocsp:
   image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: nodejs.rz-bsd.my.corp
+      alias: nodejs.dc-bsd.my.corp
   variables:
     GIT_STRATEGY: none
   stage: test
@@ -144,7 +144,7 @@ metrics:
   image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: nodejs.rz-bsd.my.corp
+      alias: nodejs.dc-bsd.my.corp
   variables:
     GIT_STRATEGY: none
   stage: test
@@ -167,7 +167,7 @@ https 🌏:
     HTTPS_TLS_STATUS_REQUEST: "true"
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: nodejs.rz-bsd.my.corp
+      alias: nodejs.dc-bsd.my.corp
   stage: test
   before_script:
     - echo -e "\e[0Ksection_start:$(date +%s):https_pre_requisites[collapsed=true]\r\e[0KInstall pre-requisites"
@@ -189,7 +189,7 @@ ui:
     GIT_STRATEGY: none
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: nodejs.rz-bsd.my.corp
+      alias: nodejs.dc-bsd.my.corp
       entrypoint: ["/bin/sh", "-c", "mkdir /builds/Admin /builds/Sub /builds/Root && ln -s /builds/Admin /data/Admin && ln -s /builds/Sub /data/Sub && ln -s /builds/Root /data/Root && chown node-red /builds/Admin /builds/Sub /builds/Root && ls -l /builds/ /data/ && exec /usr/bin/entrypoint.sh"]
   stage: test
   before_script:
@@ -207,7 +207,7 @@ websocket:
   image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: nodejs.rz-bsd.my.corp
+      alias: nodejs.dc-bsd.my.corp
   variables:
     GIT_STRATEGY: none
   stage: test
@@ -239,7 +239,7 @@ tsa:
   image: archlinux:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: nodejs.rz-bsd.my.corp
+      alias: nodejs.dc-bsd.my.corp
   variables:
     GIT_STRATEGY: none
   stage: test
@@ -258,7 +258,7 @@ acme:
   image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: nodejs.rz-bsd.my.corp
+      alias: nodejs.dc-bsd.my.corp
   stage: test
   variables:
     CERTBOT_DIR: certbot
