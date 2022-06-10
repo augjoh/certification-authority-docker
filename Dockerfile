@@ -48,7 +48,8 @@ COPY --chown=node-red:node-red --chmod=644 flows/settings.js /data/settings.js
 COPY --chown=node-red:node-red --chmod=644 flows/flows.json /data/flows.json
 
 COPY --chmod=644 flows/package.json flows/[p]ackage-lock.json flows/[n]pm-shrinkwrap.json /usr/src/node-red/
-RUN npm ci --production --no-optional && npm cache clean --force
+RUN npm ci --production --no-optional && \
+    npm cache clean --force
 
 # Setup healthcheck
 COPY --chmod=755 healthcheck.js /usr/bin/
