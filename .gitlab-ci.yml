@@ -6,7 +6,7 @@ stages:
 
 variables:
   GIT_SUBMODULE_STRATEGY: normal
-  HOSTNAME: nodejs.rz-bsd.my.corp
+  HOSTNAME: nodejs.dc-bsd.my.corp
   FF_NETWORK_PER_BUILD: 1
   INITIALIZATION_TIME: 180
 
@@ -56,7 +56,7 @@ downloads:
   image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: nodejs.rz-bsd.my.corp
+      alias: nodejs.dc-bsd.my.corp
   variables:
     GIT_STRATEGY: none
   stage: test
@@ -72,7 +72,7 @@ chain:
   image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: nodejs.rz-bsd.my.corp
+      alias: nodejs.dc-bsd.my.corp
   variables:
     GIT_STRATEGY: none
   stage: test
@@ -90,7 +90,7 @@ crls:
   image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: nodejs.rz-bsd.my.corp
+      alias: nodejs.dc-bsd.my.corp
   variables:
     GIT_STRATEGY: none
   stage: test
@@ -125,7 +125,7 @@ ocsp:
   image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: nodejs.rz-bsd.my.corp
+      alias: nodejs.dc-bsd.my.corp
   variables:
     GIT_STRATEGY: none
   stage: test
@@ -144,7 +144,7 @@ metrics:
   image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: nodejs.rz-bsd.my.corp
+      alias: nodejs.dc-bsd.my.corp
   variables:
     GIT_STRATEGY: none
   stage: test
@@ -167,7 +167,7 @@ https 🌏:
     HTTPS_TLS_STATUS_REQUEST: "true"
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: nodejs.rz-bsd.my.corp
+      alias: nodejs.dc-bsd.my.corp
   stage: test
   before_script:
     - echo -e "\e[0Ksection_start:$(date +%s):https_pre_requisites[collapsed=true]\r\e[0KInstall pre-requisites"
@@ -189,7 +189,7 @@ ui:
     GIT_STRATEGY: none
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: nodejs.rz-bsd.my.corp
+      alias: nodejs.dc-bsd.my.corp
       entrypoint: ["/bin/sh", "-c", "mkdir /builds/Admin /builds/Sub /builds/Root && ln -s /builds/Admin /data/Admin && ln -s /builds/Sub /data/Sub && ln -s /builds/Root /data/Root && chown node-red /builds/Admin /builds/Sub /builds/Root && ls -l /builds/ /data/ && exec /usr/bin/entrypoint.sh"]
   stage: test
   before_script:
@@ -207,7 +207,7 @@ websocket:
   image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: nodejs.rz-bsd.my.corp
+      alias: nodejs.dc-bsd.my.corp
   variables:
     GIT_STRATEGY: none
   stage: test
@@ -239,7 +239,7 @@ tsa:
   image: archlinux:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: nodejs.rz-bsd.my.corp
+      alias: nodejs.dc-bsd.my.corp
   variables:
     GIT_STRATEGY: none
   stage: test
@@ -258,7 +258,7 @@ acme:
   image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: nodejs.rz-bsd.my.corp
+      alias: nodejs.dc-bsd.my.corp
   stage: test
   variables:
     CERTBOT_DIR: certbot
@@ -298,7 +298,8 @@ gitlab:
     - buildah manifest add --variant "v7" list "${CI_REGISTRY_IMAGE}/arm:${CI_PIPELINE_ID}"
     - buildah manifest add --variant "v8" list "${CI_REGISTRY_IMAGE}/arm64:${CI_PIPELINE_ID}"
     - buildah manifest inspect list
-    - buildah manifest push --format=v2s2 --all list "docker://${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF/${CI_DEFAULT_BRANCH}/latest}"
+    - echo "Pushing $CI_COMMIT_REF_NAME into docker://${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME/${CI_DEFAULT_BRANCH}/latest}"
+    - buildah manifest push --format=v2s2 --all list "docker://${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME/${CI_DEFAULT_BRANCH}/latest}"
 
 .heroku:
   image: quay.io/skopeo/stable
@@ -307,8 +308,8 @@ gitlab:
   variables:
     GIT_STRATEGY: none
   script:
-    - "echo copy from docker://${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF/${CI_DEFAULT_BRANCH}/latest} to docker://registry.heroku.com/platynum/web"
-    - "skopeo copy --all --src-creds=${CI_REGISTRY_USER}:${CI_REGISTRY_PASSWORD} --dest-creds=_:${HEROKU_AUTH_TOKEN} --format=v2s2 docker://${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF/${CI_DEFAULT_BRANCH}/latest} docker://registry.heroku.com/platynum/web"
+    - "echo copy from docker://${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME/${CI_DEFAULT_BRANCH}/latest} to docker://registry.heroku.com/platynum/web"
+    - "skopeo copy --all --src-creds=${CI_REGISTRY_USER}:${CI_REGISTRY_PASSWORD} --dest-creds=_:${HEROKU_AUTH_TOKEN} --format=v2s2 docker://${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME/${CI_DEFAULT_BRANCH}/latest} docker://registry.heroku.com/platynum/web"
   environment:
     name: heroku
     url: https://acme.platynum.ch/admin
@@ -326,8 +327,8 @@ heroku:
     - buildah login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" "${CI_REGISTRY}"
     - buildah login -u "_" -p "${HEROKU_AUTH_TOKEN}" "${HEROKU_REGISTRY}"
   script:
-    - buildah pull "docker://${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF/${CI_DEFAULT_BRANCH}/latest}"
-    - buildah tag "${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF/${CI_DEFAULT_BRANCH}/latest}" "${HEROKU_REGISTRY}/platynum/web"
+    - buildah pull "docker://${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME/${CI_DEFAULT_BRANCH}/latest}"
+    - buildah tag "${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME/${CI_DEFAULT_BRANCH}/latest}" "${HEROKU_REGISTRY}/platynum/web"
     - buildah push "${HEROKU_REGISTRY}/platynum/web"
   after_script:
     - buildah logout "${HEROKU_REGISTRY}"
