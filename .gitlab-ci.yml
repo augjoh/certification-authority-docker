@@ -27,7 +27,7 @@ container:
     - if [ "${ARCH}" != "amd64" ]; then dnf -y install qemu-user-static; fi
     - buildah login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" "${CI_REGISTRY}"
   script:
-    - buildah bud --arch "${ARCH}" --variant "${VARIANT}" --format docker --isolation chroot -f Dockerfile --build-arg GIT_COMMIT="${CI_COMMIT_SHA}" -t "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}" -t "${CI_REGISTRY_IMAGE}/${ARCH}:${CI_PIPELINE_ID}" .
+    - buildah bud --arch "${ARCH}" --variant "${VARIANT}" --format docker --isolation chroot -f Dockerfile --build-arg GIT_COMMIT="${CI_COMMIT_SHA}" --build-arg GIT_TAG="{CI_COMMIT_TAG:=HEAD}" -t "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}" -t "${CI_REGISTRY_IMAGE}/${ARCH}:${CI_PIPELINE_ID}" .
     - if [ "${ARCH}" == "amd64" ]; then buildah push "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"; fi
     - buildah push "${CI_REGISTRY_IMAGE}/${ARCH}:${CI_PIPELINE_ID}"
   after_script:
