@@ -51,11 +51,29 @@ apache2() {
     if [ "${APACHE_OCSP_STAPLING}" = "true" ]; then
         APACHE_DEFINES="-DSSLUseStapling ${APACHE_DEFINES}"
     fi
+    # Does node-red listen on socket?
+    if printf "${NODE_RED_UI_HOST}" | grep -q -E "^/"; then
+        while [ ! -S "${NODE_RED_UI_HOST}" ]; do
+           sleep 3;
+        done
+        chmod 775 "${NODE_RED_UI_HOST}";
+        APACHE_DEFINES="-DForwardToSocket ${APACHE_DEFINES}";
+    fi
     /usr/sbin/httpd ${APACHE_DEFINES} -k start
     sleep 5
     tail -q /var/log/apache2/*.log
 }
 
+if printf "${NODE_RED_UI_HOST}" | grep -q -E "^/"; then
+    SOCKET_DIRECTORY=$(dirname "${NODE_RED_UI_HOST}")
+    if [ ! -d "${SOCKET_DIRECTORY}" ]; then
+        mkdir -p "${SOCKET_DIRECTORY}"
+        chown node-red:www-data "${SOCKET_DIRECTORY}"
+        chmod 2755 "${SOCKET_DIRECTORY}"
+    fi
+    # Maybe a container restart, delete leftover
+    rm -f "${NODE_RED_UI_HOST}"
+fi
 if [ "${CONTAINER_ENABLE_APACHE}" != "false" ]; then
     /usr/sbin/httpd -v | sed "s/^/$(date "+%d %b %H:%M:%S") - [info] /"
     # This creates a zombie
