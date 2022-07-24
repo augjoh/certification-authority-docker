@@ -9,6 +9,7 @@ variables:
   HOSTNAME: nodejs.dc-git.my.corp
   FF_NETWORK_PER_BUILD: 1
   INITIALIZATION_TIME: 180
+  NODE_RED_UI_HOST: /var/run/node-red/sock
 
 include:
   - template: Security/SAST.gitlab-ci.yml
