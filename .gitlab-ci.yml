@@ -230,7 +230,7 @@ audit:
     - pwd
     - cd /usr/src/node-red
     - ls -l
-    - npm audit --production || (npm audit fix --production && false)
+    - npm audit --omit=dev || (npm audit fix --omit=dev && false)
   rules:
     - if: '$CI_PIPELINE_SOURCE != "schedule"'
       allow_failure: true
