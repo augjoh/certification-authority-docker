@@ -52,7 +52,7 @@ apache2() {
         APACHE_DEFINES="-DSSLUseStapling ${APACHE_DEFINES}"
     fi
     # Does node-red listen on socket?
-    if printf "${NODE_RED_UI_HOST}" | grep -q -E "^/"; then
+    if printf "%s" "${NODE_RED_UI_HOST}" | grep -q -E "^/"; then
         while [ ! -S "${NODE_RED_UI_HOST}" ]; do
            sleep 3;
         done
@@ -65,14 +65,14 @@ apache2() {
 }
 
 if [ ! -d "${DATADIR}/blacklist/00" ]; then
-    seq 0 255 | while read x; do
-        seq 0 255 | while read y; do
-            printf "${DATADIR}/blacklist/%02x/%02x\n" $x $y;
+    seq 0 255 | while read -r x; do
+        seq 0 255 | while read -r y; do
+            printf "${DATADIR}/blacklist/%02x/%02x\n" "${x}" "${y}";
         done
     done | su -c "xargs -n 256 -- mkdir -p" node-red
 fi
 
-if printf "${NODE_RED_UI_HOST}" | grep -q -E "^/"; then
+if printf "%s" "${NODE_RED_UI_HOST}" | grep -q -E "^/"; then
     SOCKET_DIRECTORY=$(dirname "${NODE_RED_UI_HOST}")
     if [ ! -d "${SOCKET_DIRECTORY}" ]; then
         mkdir -p "${SOCKET_DIRECTORY}"
