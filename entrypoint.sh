@@ -64,6 +64,14 @@ apache2() {
     tail -q /var/log/apache2/*.log
 }
 
+if [ ! -d "${DATADIR}/blacklist/00" ]; then
+    seq 0 255 | while read x; do
+        seq 0 255 | while read y; do
+            printf "${DATADIR}/blacklist/%02x/%02x\n" $x $y;
+        done
+    done | su -c "xargs -n 256 -- mkdir -p" node-red
+fi
+
 if printf "${NODE_RED_UI_HOST}" | grep -q -E "^/"; then
     SOCKET_DIRECTORY=$(dirname "${NODE_RED_UI_HOST}")
     if [ ! -d "${SOCKET_DIRECTORY}" ]; then
