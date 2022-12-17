@@ -6,9 +6,10 @@ stages:
 
 variables:
   GIT_SUBMODULE_STRATEGY: normal
-  HOSTNAME: nodejs.dc-bsd.my.corp
+  HOSTNAME: nodejs.dc-git.my.corp
   FF_NETWORK_PER_BUILD: 1
   INITIALIZATION_TIME: 180
+  NODE_RED_UI_HOST: /var/run/node-red/sock
 
 include:
   - template: Security/SAST.gitlab-ci.yml
@@ -27,7 +28,7 @@ container:
     - if [ "${ARCH}" != "amd64" ]; then dnf -y install qemu-user-static; fi
     - buildah login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" "${CI_REGISTRY}"
   script:
-    - buildah bud --arch "${ARCH}" --variant "${VARIANT}" --format docker --isolation chroot -f Dockerfile --build-arg GIT_COMMIT="${CI_COMMIT_SHA}" -t "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}" -t "${CI_REGISTRY_IMAGE}/${ARCH}:${CI_PIPELINE_ID}" .
+    - buildah bud --arch "${ARCH}" --variant "${VARIANT}" --format docker --isolation chroot -f Dockerfile --build-arg GIT_COMMIT="${CI_COMMIT_SHA}" --build-arg GIT_TAG="{CI_COMMIT_TAG:=HEAD}" -t "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}" -t "${CI_REGISTRY_IMAGE}/${ARCH}:${CI_PIPELINE_ID}" .
     - if [ "${ARCH}" == "amd64" ]; then buildah push "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"; fi
     - buildah push "${CI_REGISTRY_IMAGE}/${ARCH}:${CI_PIPELINE_ID}"
   after_script:
@@ -56,7 +57,7 @@ downloads:
   image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: nodejs.dc-bsd.my.corp
+      alias: nodejs.dc-git.my.corp
   variables:
     GIT_STRATEGY: none
   stage: test
@@ -72,7 +73,7 @@ chain:
   image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: nodejs.dc-bsd.my.corp
+      alias: nodejs.dc-git.my.corp
   variables:
     GIT_STRATEGY: none
   stage: test
@@ -90,7 +91,7 @@ crls:
   image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: nodejs.dc-bsd.my.corp
+      alias: nodejs.dc-git.my.corp
   variables:
     GIT_STRATEGY: none
   stage: test
@@ -125,7 +126,7 @@ ocsp:
   image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: nodejs.dc-bsd.my.corp
+      alias: nodejs.dc-git.my.corp
   variables:
     GIT_STRATEGY: none
   stage: test
@@ -144,7 +145,7 @@ metrics:
   image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: nodejs.dc-bsd.my.corp
+      alias: nodejs.dc-git.my.corp
   variables:
     GIT_STRATEGY: none
   stage: test
@@ -167,7 +168,7 @@ https 🌏:
     HTTPS_TLS_STATUS_REQUEST: "true"
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: nodejs.dc-bsd.my.corp
+      alias: nodejs.dc-git.my.corp
   stage: test
   before_script:
     - echo -e "\e[0Ksection_start:$(date +%s):https_pre_requisites[collapsed=true]\r\e[0KInstall pre-requisites"
@@ -189,7 +190,7 @@ ui:
     GIT_STRATEGY: none
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: nodejs.dc-bsd.my.corp
+      alias: nodejs.dc-git.my.corp
       entrypoint: ["/bin/sh", "-c", "mkdir /builds/Admin /builds/Sub /builds/Root && ln -s /builds/Admin /data/Admin && ln -s /builds/Sub /data/Sub && ln -s /builds/Root /data/Root && chown node-red /builds/Admin /builds/Sub /builds/Root && ls -l /builds/ /data/ && exec /usr/bin/entrypoint.sh"]
   stage: test
   before_script:
@@ -207,7 +208,7 @@ websocket:
   image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: nodejs.dc-bsd.my.corp
+      alias: nodejs.dc-git.my.corp
   variables:
     GIT_STRATEGY: none
   stage: test
@@ -229,7 +230,7 @@ audit:
     - pwd
     - cd /usr/src/node-red
     - ls -l
-    - npm audit --production || (npm audit fix --production && false)
+    - npm audit --omit=dev || (npm audit fix --omit=dev && false)
   rules:
     - if: '$CI_PIPELINE_SOURCE != "schedule"'
       allow_failure: true
@@ -239,7 +240,7 @@ tsa:
   image: archlinux:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: nodejs.dc-bsd.my.corp
+      alias: nodejs.dc-git.my.corp
   variables:
     GIT_STRATEGY: none
   stage: test
@@ -258,7 +259,7 @@ acme:
   image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-      alias: nodejs.dc-bsd.my.corp
+      alias: nodejs.dc-git.my.corp
   stage: test
   variables:
     CERTBOT_DIR: certbot
@@ -276,9 +277,11 @@ acme:
     - NAME=$(hostname -f)
     - echo ${NAME}
     - certbot register ${CERTBOT_ARGS} --no-eff-email --email=node@my.corp --agree-tos
-    # - certbot certonly ${CERTBOT_ARGS} --standalone -d ${NAME}
-    # - certbot revoke ${CERTBOT_ARGS} --no-delete-after-revoke --cert-path "${CERTBOT_DIR}/etc/live/${NAME}/cert.pem"
-    # - openssl ocsp -CAfile root.crt.pem -issuer sub.crt.pem -trust_other -cert "${CERTBOT_DIR}/etc/live/${NAME}/cert.pem" -url http://${HOSTNAME}/ocsp/Sub/
+    # TODO: Certbot wasn't able to bind to :80 using IPv4, this is often expected
+    # due to the dual stack nature of IPv6 socket implementations.
+    #- certbot certonly ${CERTBOT_ARGS} --standalone -d ${NAME}
+    #- certbot revoke ${CERTBOT_ARGS} --no-delete-after-revoke --cert-path "${CERTBOT_DIR}/etc/live/${NAME}/cert.pem"
+    #- openssl ocsp -CAfile root.crt.pem -issuer sub.crt.pem -trust_other -cert "${CERTBOT_DIR}/etc/live/${NAME}/cert.pem" -url http://${HOSTNAME}/ocsp/Sub/
   artifacts:
     when: on_failure
     paths:
@@ -302,21 +305,6 @@ gitlab:
     - buildah manifest push --format=v2s2 --all list "docker://${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME/${CI_DEFAULT_BRANCH}/latest}"
 
 .heroku:
-  image: quay.io/skopeo/stable
-  resource_group: heroku
-  stage: deploy
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - "echo copy from docker://${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME/${CI_DEFAULT_BRANCH}/latest} to docker://registry.heroku.com/platynum/web"
-    - "skopeo copy --all --src-creds=${CI_REGISTRY_USER}:${CI_REGISTRY_PASSWORD} --dest-creds=_:${HEROKU_AUTH_TOKEN} --format=v2s2 docker://${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME/${CI_DEFAULT_BRANCH}/latest} docker://registry.heroku.com/platynum/web"
-  environment:
-    name: heroku
-    url: https://acme.platynum.ch/admin
-  rules:
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == $CI_DEFAULT_BRANCH'
-
-heroku:
   image: quay.io/buildah/stable
   resource_group: heroku
   stage: deploy

@@ -1,10 +1,11 @@
 FROM docker.io/library/node:lts-alpine AS base
 
 ARG GIT_COMMIT="unknown"
+ARG GIT_TAG="HEAD"
 LABEL org.opencontainers.image.url="https://registry.gitlab.com/platynum/certification-authority/container" \
       org.opencontainers.image.documentation="https://platynum.gitlab.io/certification-authority/documentation/" \
       org.opencontainers.image.source="https://gitlab.com/platynum/certification-authority/container" \
-      org.opencontainers.image.version="0.8.0" \
+      org.opencontainers.image.version="$GIT_TAG" \
       org.opencontainers.image.revision="$GIT_COMMIT" \
       org.opencontainers.image.vendor="https://platynum.ch/" \
       org.opencontainers.image.licenses="AGPL-3.0" \
@@ -31,6 +32,7 @@ RUN set -ex && \
     curl --remote-time -o /data/ctlogs/apple_log_list.json https://valid.apple.com/ct/log_list/current_log_list.json && \
     curl --remote-time -o /data/ctlogs/chrome_log_list.json https://www.gstatic.com/ct/log_list/v3/log_list.json && \
     curl --remote-time -o /data/ctlogs/chrome_log_list.sig https://www.gstatic.com/ct/log_list/v3/log_list.sig && \
+    curl --remote-time -o /data/ctlogs/chrome_log_list_pubkey.pem https://www.gstatic.com/ct/log_list/v3/log_list_pubkey.pem && \
     chown -R node-red:node-red /data
     # chmod -R g+rwX /data && \
     # chown -R node-red:root /usr/src/node-red && chmod -R g+rwX /usr/src/node-red
@@ -50,6 +52,8 @@ COPY --chown=node-red:node-red --chmod=644 flows/flows.json /data/flows.json
 COPY --chmod=644 flows/package.json flows/[p]ackage-lock.json flows/[n]pm-shrinkwrap.json /usr/src/node-red/
 RUN npm ci --production --no-optional && \
     npm cache clean --force
+# Override default red.js with patched version
+COPY --chown=node-red:node-red --chmod=644 flows/bin/node-red-ca.js /usr/src/node-red/node_modules/node-red/red.js
 
 # Setup healthcheck
 COPY --chmod=755 healthcheck.js /usr/bin/
