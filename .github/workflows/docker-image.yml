@@ -35,6 +35,7 @@ jobs:
             --cache-to "type=local,dest=.buildx-cache" \
             --platform linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/s390x,linux/ppc64le \
             --output "type=image,push=false" \
+            --attest "type=provenance,mode=max" \
             --build-arg GIT_COMMIT=$GITHUB_SHA \
             --tag platynum/certification-authority:latest \
             --file Dockerfile .
@@ -56,6 +57,10 @@ jobs:
       - name: Docker Check Manifest
         run: |
           docker run --rm mplatform/mquery platynum/certification-authority:latest
+      - name: Docker Check Provenance
+        run: |
+          docker buildx imagetools inspect platynum/certification-authority:latest \
+                 --format "{{ json .Provenance }}"
       - name: Clear
         if: always()
         run: |
