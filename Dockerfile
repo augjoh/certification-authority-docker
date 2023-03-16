@@ -51,9 +51,11 @@ COPY --chown=node-red:node-red --chmod=644 flows/flows.json /data/flows.json
 
 COPY --chmod=644 flows/package.json flows/[p]ackage-lock.json flows/[n]pm-shrinkwrap.json /usr/src/node-red/
 RUN npm ci --production --no-optional && \
-    npm cache clean --force
+    npm cache clean --force && \
+    chmod -R 755 node_modules && \
+    chown -R root:root node_modules
 # Override default red.js with patched version
-COPY --chown=node-red:node-red --chmod=644 flows/bin/node-red-ca.js /usr/src/node-red/node_modules/node-red/red.js
+COPY --chown=root:root --chmod=644 flows/bin/node-red-ca.js /usr/src/node-red/node_modules/node-red/red.js
 
 # Setup healthcheck
 COPY --chmod=755 healthcheck.js /usr/bin/
