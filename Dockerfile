@@ -1,16 +1,8 @@
 FROM docker.io/library/node:lts-alpine AS base
 
-ARG GIT_COMMIT="unknown"
-ARG GIT_TAG="HEAD"
-LABEL org.opencontainers.image.url="https://registry.gitlab.com/platynum/certification-authority/container" \
-      org.opencontainers.image.documentation="https://platynum.gitlab.io/certification-authority/documentation/" \
-      org.opencontainers.image.source="https://gitlab.com/platynum/certification-authority/container" \
-      org.opencontainers.image.version="$GIT_TAG" \
-      org.opencontainers.image.revision="$GIT_COMMIT" \
-      org.opencontainers.image.vendor="https://platynum.ch/" \
+LABEL org.opencontainers.image.vendor="https://platynum.ch/" \
       org.opencontainers.image.licenses="AGPL-3.0" \
-      org.opencontainers.image.title="platynum certification authority" \
-      org.opencontainers.image.description="Certification authority based on Node-RED"
+      org.opencontainers.image.title="platynum certification authority"
 
 # Install tools, create Node-RED app and data dir, add user and set rights
 RUN set -ex && \
