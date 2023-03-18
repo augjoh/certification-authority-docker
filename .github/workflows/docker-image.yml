@@ -36,7 +36,11 @@ jobs:
             --platform linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/s390x,linux/ppc64le \
             --output "type=image,push=false" \
             --attest "type=provenance,mode=max" \
-            --build-arg GIT_COMMIT=$GITHUB_SHA \
+            --label org.opencontainers.image.url="https://github.com/augjoh/certification-authority-docker" \
+            --label org.opencontainers.image.documentation="https://platynum.gitlab.io/certification-authority/documentation/" \
+            --label org.opencontainers.image.source="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" \
+            --label org.opencontainers.image.version="$GITHUB_SHA" \
+            --label org.opencontainers.image.revision="$GITHUB_SHA" \
             --tag platynum/certification-authority:latest \
             --file Dockerfile .
       - name: Docker Login
