@@ -17,9 +17,9 @@ include:
     rules:
       - if: $CI_SERVER_HOST == "gitlab.com"
 
-container_scanning:
-  variables:
-    CS_IMAGE: $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
+#container_scanning:
+#  variables:
+#    CS_IMAGE: $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
 
 container:
   image: quay.io/buildah/stable
