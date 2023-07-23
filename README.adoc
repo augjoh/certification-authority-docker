@@ -1,5 +1,7 @@
+ifdef::env-github[]
 image::https://api.securityscorecards.dev/projects/github.com/augjoh/certification-authority-docker/badge[https://securityscorecards.dev/viewer/?uri=github.com/augjoh/certification-authority-docker]
 image::https://github.com/augjoh/certification-authority-docker/actions/workflows/docker-image.yml/badge.svg[https://github.com/augjoh/certification-authority-docker/actions/workflows/docker-image.yml]
+endif::[]
 
 = Certification Authority (CA) - Container
 
