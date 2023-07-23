@@ -6,6 +6,9 @@ on:
   schedule:
     - cron: '0 19 * * *'
 
+# Declare default permissions as read only.
+permissions: read-all
+
 jobs:
   buildx:
     runs-on: ubuntu-latest
