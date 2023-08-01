@@ -322,7 +322,9 @@ gitlab:
     - if [ "${CI_SERVER_HOST}" = "gitlab.com" ]; then
         curl -o /usr/local/bin/cosign -O -L "https://github.com/sigstore/cosign/releases/latest/download/cosign-linux-amd64";
         chmod +x /usr/local/bin/cosign;
-        cosign sign "${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME/${CI_DEFAULT_BRANCH}/latest}";
+        for digest in $(buildah images --digests | awk '/sha256:/ { print $3 }'); do
+          cosign sign "${CI_REGISTRY_IMAGE}@${digest}";
+        done
       fi
 
 .heroku:
