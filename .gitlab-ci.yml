@@ -322,6 +322,7 @@ gitlab:
     - if [ "${CI_SERVER_HOST}" = "gitlab.com" ]; then
         curl -o /usr/local/bin/cosign -O -L "https://github.com/sigstore/cosign/releases/latest/download/cosign-linux-amd64";
         chmod +x /usr/local/bin/cosign;
+        mkdir -p ~/.docker && ln -s /run/containers/0/auth.json -/.docker/config.json && ls -l ~/.docker;
         for digest in $(buildah images --digests | awk '/sha256:/ { print $3 }'); do
           cosign sign "${CI_REGISTRY_IMAGE}@${digest}";
         done
