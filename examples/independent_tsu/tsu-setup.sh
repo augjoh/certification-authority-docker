@@ -31,7 +31,7 @@ for instance in "${INSTANCES[@]}"; do
                --env-file tsu.env \
                -v "$(pwd)/${instance}:/data/Root/tsa" \
                -v "$(pwd)/root:/data/Root" \
-               registry.gitlab.com/platynum/certification-authority/container:development
+               registry.gitlab.com/platynum/certification-authority/container
     { set +x; } 2>/dev/null
 done
 
