@@ -306,10 +306,12 @@ gitlab:
     STORAGE_DRIVER: vfs
     GIT_STRATEGY: none
     COSIGN_YES: "true"
+    REGISTRY_AUTH_FILE: ".docker/config.json"
   id_tokens:
     SIGSTORE_ID_TOKEN:
       aud: sigstore
   before_script:
+    - mkdir -m 700 -p "$(dirname "${REGISTRY_AUTH_FILE}")"
     - buildah login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" "${CI_REGISTRY}"
   script:
     - buildah manifest create list
@@ -322,11 +324,12 @@ gitlab:
     - if [ "${CI_SERVER_HOST}" = "gitlab.com" ]; then
         curl -o /usr/local/bin/cosign -O -L "https://github.com/sigstore/cosign/releases/latest/download/cosign-linux-amd64";
         chmod +x /usr/local/bin/cosign;
-        mkdir -p ~/.docker && cp -v /var/tmp/containers-user-0/containers/containers/auth.json ~/.docker/config.json && ls -l ~/.docker;
         for digest in $(buildah images --digests | awk '/sha256:/ { print $3 }'); do
           cosign sign "${CI_REGISTRY_IMAGE}@${digest}";
         done
       fi
+  after_script:
+    - rm -f .docker/config.json
 
 .heroku:
   image: quay.io/buildah/stable
