@@ -14,10 +14,12 @@ variables:
 include:
   - template: Security/SAST.gitlab-ci.yml
   - template: Container-Scanning.gitlab-ci.yml
+    rules:
+      - if: $CI_SERVER_HOST == "gitlab.com"
 
-container_scanning:
-  variables:
-    CS_IMAGE: $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
+#container_scanning:
+#  variables:
+#    CS_IMAGE: $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
 
 container:
   image: quay.io/buildah/stable
@@ -303,7 +305,13 @@ gitlab:
   variables:
     STORAGE_DRIVER: vfs
     GIT_STRATEGY: none
+    COSIGN_YES: "true"
+    REGISTRY_AUTH_FILE: ".docker/config.json"
+  id_tokens:
+    SIGSTORE_ID_TOKEN:
+      aud: sigstore
   before_script:
+    - mkdir -m 700 -p "$(dirname "${REGISTRY_AUTH_FILE}")"
     - buildah login -u "${CI_REGISTRY_USER}" -p "${CI_REGISTRY_PASSWORD}" "${CI_REGISTRY}"
   script:
     - buildah manifest create list
@@ -313,6 +321,17 @@ gitlab:
     - buildah manifest inspect list
     - echo "Pushing $CI_COMMIT_REF_NAME into docker://${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME/${CI_DEFAULT_BRANCH}/latest}"
     - buildah manifest push --format=v2s2 --all list "docker://${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME/${CI_DEFAULT_BRANCH}/latest}"
+    - if [ "${CI_SERVER_HOST}" = "gitlab.com" ]; then
+        curl -o /usr/local/bin/cosign -O -L "https://github.com/sigstore/cosign/releases/latest/download/cosign-linux-amd64";
+        chmod +x /usr/local/bin/cosign;
+        mkdir -p ~/.docker;
+        cp -v "${REGISTRY_AUTH_FILE}" ~/.docker/config.json;
+        for digest in $(buildah images --digests | awk '/sha256:/ { print $3 }'); do
+          cosign sign "${CI_REGISTRY_IMAGE}@${digest}";
+        done
+      fi
+  after_script:
+    - rm -f .docker/config.json
 
 .heroku:
   image: quay.io/buildah/stable
