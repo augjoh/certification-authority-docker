@@ -42,7 +42,7 @@ COPY --chown=node-red:node-red --chmod=644 flows/settings.js /data/settings.js
 COPY --chown=node-red:node-red --chmod=644 flows/flows.json /data/flows.json
 
 COPY --chmod=644 flows/package.json flows/[p]ackage-lock.json flows/[n]pm-shrinkwrap.json /usr/src/node-red/
-RUN apk add --no-cache python3 && \
+RUN apk add --no-cache python3 make g++ && \
     npm ci --omit=dev --omit=optional && \
     npm cache clean --force && \
     chmod -R 755 node_modules && \
