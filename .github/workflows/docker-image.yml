@@ -11,7 +11,7 @@ permissions: read-all
 
 jobs:
   buildx:
-    timeout-minutes: 180
+    timeout-minutes: 600
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
