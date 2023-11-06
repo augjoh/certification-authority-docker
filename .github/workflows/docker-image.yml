@@ -6,6 +6,9 @@ on:
   schedule:
     - cron: '0 19 * * *'
 
+env:
+  PLATFORMS: "linux/amd64,linux/arm64,linux/ppc64le"
+
 # Declare default permissions as read only.
 permissions: read-all
 
@@ -37,7 +40,7 @@ jobs:
           docker buildx build \
             --cache-from "type=local,src=.buildx-cache" \
             --cache-to "type=local,dest=.buildx-cache" \
-            --platform linux/amd64,linux/arm/v6,linux/arm64,linux/ppc64le \
+            --platform "$PLATFORMS" \
             --output "type=image,push=false" \
             --attest "type=provenance,mode=max" \
             --label org.opencontainers.image.url="https://github.com/augjoh/certification-authority-docker" \
@@ -57,7 +60,7 @@ jobs:
         run: |
           docker buildx build \
             --cache-from "type=local,src=.buildx-cache" \
-            --platform linux/amd64,linux/arm/v6,linux/arm64,linux/ppc64le \
+            --platform "$PLATFORM" \
             --output "type=image,push=true" \
             --build-arg GIT_COMMIT=$GITHUB_SHA \
             --tag platynum/certification-authority:latest \
