@@ -49,8 +49,6 @@ container:
     matrix:
       - ARCH: ["amd64"]
         VARIANT: [""]
-      - ARCH: ["arm64"]
-        VARIANT: ["v8"]
       - ARCH: ["arm"]
         VARIANT: ["v7"]
 #  rules:
@@ -317,7 +315,6 @@ gitlab:
     - buildah manifest create list
     - buildah manifest add list "${CI_REGISTRY_IMAGE}/amd64:${CI_PIPELINE_ID}"
     - buildah manifest add --variant "v7" list "${CI_REGISTRY_IMAGE}/arm:${CI_PIPELINE_ID}"
-    - buildah manifest add --variant "v8" list "${CI_REGISTRY_IMAGE}/arm64:${CI_PIPELINE_ID}"
     - buildah manifest inspect list
     - echo "Pushing $CI_COMMIT_REF_NAME into docker://${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME/${CI_DEFAULT_BRANCH}/latest}"
     - buildah manifest push --format=v2s2 --all list "docker://${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME/${CI_DEFAULT_BRANCH}/latest}"

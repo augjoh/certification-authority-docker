@@ -64,12 +64,16 @@ apache2() {
     tail -q /var/log/apache2/*.log
 }
 
-if [ ! -d "${DATADIR}/blacklist/00" ]; then
-    seq 0 255 | while read -r x; do
-        seq 0 255 | while read -r y; do
-            printf "${DATADIR}/blacklist/%02x/%02x\n" "${x}" "${y}";
-        done
-    done | su -c "xargs -n 256 -- mkdir -p" node-red
+# Create 256*256 blacklist directories if requested (nodejs is too slow)
+if [ -n "${CA_BLACKLIST_DEPTH}" ] && [ "${CA_BLACKLIST_DEPTH}" -eq "2" ]; then
+    if [ ! -d "${DATADIR}/blacklist/ff/ff" ]; then
+        echo "$(date "+%d %b %H:%M:%S") - [info] Creating blacklist directories ... (depth=${CA_BLACKLIST_DEPTH})"
+        seq 0 255 | while read -r x; do
+            seq 0 255 | while read -r y; do
+                printf "${DATADIR}/blacklist/%02x/%02x\n" "${x}" "${y}";
+            done
+        done | su -c "xargs -n 256 -- mkdir -p" node-red
+    fi
 fi
 
 if printf "%s" "${NODE_RED_UI_HOST}" | grep -q -E "^/"; then
