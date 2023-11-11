@@ -43,7 +43,7 @@ COPY --chown=node-red:node-red --chmod=644 flows/flows.json /data/flows.json
 
 COPY --chmod=644 flows/package.json flows/[p]ackage-lock.json flows/[n]pm-shrinkwrap.json /usr/src/node-red/
 RUN apk add --no-cache python3 make g++ && \
-    npm_config_verbose=true npm ci --ignore-scripts --omit=dev --omit=optional && \
+    npm_config_verbose=true npm ci --loglevel=verbose --ignore-scripts --omit=dev --omit=optional && \
     cd node_modules/isolated-vm && \
     npx node-gyp rebuild --release && \
     cd ../.. && \
