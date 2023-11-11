@@ -45,7 +45,7 @@ COPY --chmod=644 flows/package.json flows/[p]ackage-lock.json flows/[n]pm-shrink
 RUN apk add --no-cache python3 make g++ && \
     npm_config_verbose=true npm ci --ignore-scripts --omit=dev --omit=optional && \
     cd node_modules/isolated-vm && \
-    node-gyp rebuild --release && \
+    npx node-gyp rebuild --release && \
     cd ../.. && \
     apk del python3 make g++ && \
     npm cache clean --force && \
