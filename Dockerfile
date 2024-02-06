@@ -1,4 +1,4 @@
-FROM docker.io/library/node:lts-alpine AS base
+FROM docker.io/library/node:18-alpine AS base
 
 LABEL org.opencontainers.image.vendor="https://platynum.ch/" \
       org.opencontainers.image.licenses="AGPL-3.0" \
