@@ -10,7 +10,7 @@ The following versions are currently being supported with security updates:
 
 ## Reporting a Vulnerability
 
-Vulnerailities and weaknesses can be reported at [the gitlab issue tracker
+Vulnerabilities and weaknesses can be reported at [the gitlab issue tracker
 ](https://gitlab.com/platynum/certification-authority/container/-/issues)
 
 Please mark vulnerability issues confidential, as long as there is no fixed
