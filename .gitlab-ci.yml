@@ -275,6 +275,8 @@ acme:
     CERTBOT_DIR: certbot
     CERTBOT_ARGS: "--config-dir=${CERTBOT_DIR}/etc/ --work-dir=${CERTBOT_DIR}/work/ --logs-dir=${CERTBOT_DIR}/log/ --server=https://${HOSTNAME}/acme/Sub/"
     GIT_STRATEGY: none
+    NODE_RED_LOGGING_CONSOLE_LEVEL: "info"
+    CI_DEBUG_SERVICES: "true"
   before_script:
     - apt-get -q update
     - apt-get -q install -y certbot curl
