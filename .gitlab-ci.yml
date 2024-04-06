@@ -58,13 +58,6 @@ container:
 #        - Dockerfile
 #        - flows/
 
-internal:
-  image: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
-  stage: test
-  script:
-    - unreached
-  when: manual
-
 downloads:
   image: debian:latest
   services:
