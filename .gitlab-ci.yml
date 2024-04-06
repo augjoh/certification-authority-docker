@@ -275,6 +275,7 @@ acme:
     CERTBOT_DIR: certbot
     CERTBOT_ARGS: "--config-dir=${CERTBOT_DIR}/etc/ --work-dir=${CERTBOT_DIR}/work/ --logs-dir=${CERTBOT_DIR}/log/ --server=https://${HOSTNAME}/acme/Sub/"
     GIT_STRATEGY: none
+    CI_DEBUG_SERVICES: "true"
   before_script:
     - apt-get -q update
     - apt-get -q install -y certbot curl
@@ -289,9 +290,9 @@ acme:
     - certbot register ${CERTBOT_ARGS} --no-eff-email --email=node@my.corp --agree-tos
     # TODO: Certbot wasn't able to bind to :80 using IPv4, this is often expected
     # due to the dual stack nature of IPv6 socket implementations.
-    # - certbot certonly ${CERTBOT_ARGS} --standalone -d ${NAME}
-    # - certbot revoke ${CERTBOT_ARGS} --no-delete-after-revoke --cert-path "${CERTBOT_DIR}/etc/live/${NAME}/cert.pem"
-    # - openssl ocsp -CAfile root.crt.pem -issuer sub.crt.pem -trust_other -cert "${CERTBOT_DIR}/etc/live/${NAME}/cert.pem" -url http://${HOSTNAME}/ocsp/Sub/
+    - certbot certonly ${CERTBOT_ARGS} --standalone -d ${NAME}
+    - certbot revoke ${CERTBOT_ARGS} --no-delete-after-revoke --cert-path "${CERTBOT_DIR}/etc/live/${NAME}/cert.pem"
+    - openssl ocsp -CAfile root.crt.pem -issuer sub.crt.pem -trust_other -cert "${CERTBOT_DIR}/etc/live/${NAME}/cert.pem" -url http://${HOSTNAME}/ocsp/Sub/
   artifacts:
     when: on_failure
     paths:
