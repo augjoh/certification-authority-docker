@@ -293,6 +293,8 @@ acme:
     # due to the dual stack nature of IPv6 socket implementations.
     - certbot certonly ${CERTBOT_ARGS} --standalone -d ${NAME}
     - certbot revoke ${CERTBOT_ARGS} --no-delete-after-revoke --cert-path "${CERTBOT_DIR}/etc/live/${NAME}/cert.pem"
+    - openssl x509 -noout -text -in "${CERTBOT_DIR}/etc/live/${NAME}/cert.pem"
+    - sleep 5
     - openssl ocsp -CAfile root.crt.pem -issuer sub.crt.pem -trust_other -cert "${CERTBOT_DIR}/etc/live/${NAME}/cert.pem" -url http://${HOSTNAME}/ocsp/Sub/
   artifacts:
     when: on_failure
