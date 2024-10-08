@@ -1,16 +1,25 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.0.1
+    rev: v4.5.0
     hooks:
       - id: check-added-large-files
+        language: system
       - id: check-case-conflict
+        language: system
       - id: check-executables-have-shebangs
+        language: system
       - id: check-shebang-scripts-are-executable
+        language: system
       - id: check-yaml
+        language: system
       - id: detect-private-key
+        language: system
       - id: forbid-new-submodules
+        language: system
       - id: mixed-line-ending
+        language: system
       - id: trailing-whitespace
+        language: system
 #  - repo: git://github.com/detailyang/pre-commit-shell
 #    rev: v1.0.6
 #    hooks:
