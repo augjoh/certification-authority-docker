@@ -9,6 +9,8 @@ cd "${DATADIR}" || exit 1
 apache2() {
     APACHE2_SSL_CONF=/etc/apache2/conf.d/ssl.conf
 
+    rm -f "${APACHE2_PID_FILE:-/run/httpd/httpd.pid}"
+
     while [ ! -f "${DATADIR}/Sub/https/https-EC.crt.pem" ]; do
         sleep 3
     done
