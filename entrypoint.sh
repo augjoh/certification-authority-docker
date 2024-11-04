@@ -8,6 +8,9 @@ cd "${DATADIR}" || exit 1
 
 apache2() {
     APACHE2_SSL_CONF=/etc/apache2/conf.d/ssl.conf
+    APACHE2_HTTPD_PID=/var/run/apache2/httpd.pid
+
+    rm -f "${APACHE2_HTTPD_PID}"
 
     rm -f "${APACHE2_PID_FILE:-/run/httpd/httpd.pid}"
 
