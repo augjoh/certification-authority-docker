@@ -14,8 +14,6 @@ apache2() {
 
     rm -f "${APACHE2_PID_FILE:-/run/httpd/httpd.pid}"
 
-    rm -f "${APACHE2_PID_FILE:-/run/httpd/httpd.pid}"
-
     while [ ! -f "${DATADIR}/Sub/https/https-EC.crt.pem" ]; do
         sleep 3
     done
