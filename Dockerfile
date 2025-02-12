@@ -25,6 +25,7 @@ RUN set -ex && \
     curl --remote-time -o /data/ctlogs/chrome_log_list.json https://www.gstatic.com/ct/log_list/v3/log_list.json && \
     curl --remote-time -o /data/ctlogs/chrome_log_list.sig https://www.gstatic.com/ct/log_list/v3/log_list.sig && \
     curl --remote-time -o /data/ctlogs/chrome_log_list_pubkey.pem https://www.gstatic.com/ct/log_list/v3/log_list_pubkey.pem && \
+    curl --remote-time -o /data/special-use-domain.csv https://www.iana.org/assignments/special-use-domain-names/special-use-domain.csv && \
     chown -R node-red:node-red /data
     # chmod -R g+rwX /data && \
     # chown -R node-red:root /usr/src/node-red && chmod -R g+rwX /usr/src/node-red
