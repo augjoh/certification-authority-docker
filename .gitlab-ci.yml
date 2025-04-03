@@ -51,6 +51,8 @@ container:
         VARIANT: [""]
       - ARCH: ["arm"]
         VARIANT: ["v7"]
+      - ARCH: ["arm64"]
+        VARIANT: [""]
 #  rules:
 #    - changes:
 #        - Dockerfile
