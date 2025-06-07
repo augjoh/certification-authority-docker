@@ -51,8 +51,8 @@ container:
         VARIANT: [""]
       - ARCH: ["arm64"]
         VARIANT: ["v8"]
-      - ARCH: ["arm64"]
-        VARIANT: ["v8"]
+      - ARCH: ["arm"]
+        VARIANT: ["v7"]
 #  rules:
 #    - changes:
 #        - Dockerfile
@@ -313,6 +313,10 @@ gitlab:
   script:
     - buildah manifest create list
     - buildah manifest add list "${CI_REGISTRY_IMAGE}/amd64:${CI_PIPELINE_ID}"
+<<<<<<< HEAD
+=======
+    - buildah manifest add --variant "v7" list "${CI_REGISTRY_IMAGE}/arm:${CI_PIPELINE_ID}"
+>>>>>>> 82c123d (Revert "Disable ARM64 here")
     - buildah manifest add --variant "v8" list "${CI_REGISTRY_IMAGE}/arm64:${CI_PIPELINE_ID}"
     - buildah manifest inspect list
     - echo "Pushing $CI_COMMIT_REF_NAME into docker://${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME/${CI_DEFAULT_BRANCH}/latest}"
