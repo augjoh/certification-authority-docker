@@ -96,3 +96,4 @@ jobs:
         uses: anchore/scan-action@v6
         with:
           image: "docker.io/platynum/certification-authority:latest"
+          output-format: "table"
