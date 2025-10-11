@@ -83,7 +83,7 @@ jobs:
       - name: "Run aquasecurity/trivy vulnerability scanner"
         uses: aquasecurity/trivy-action@latest
         with:
-          image-ref: "docker.io/platynum/certification-authority:latest"
+          image-ref: "docker.io/platynum/certification-authority:0.28.0"
           format: "table"
           exit-code: "1"
           ignore-unfixed: true
