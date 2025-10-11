@@ -1,3 +1,4 @@
+---
 name: Docker Image CI
 
 on:
@@ -79,8 +80,8 @@ jobs:
   trivy:
     runs-on: ubuntu-latest
     steps:
-      - name: "Run trivy vulnerability scanner"
-        uses: aquasecurity/trivy-action
+      - name: "Run aquasecurity/trivy vulnerability scanner"
+        uses: aquasecurity/trivy-action@latest
         with:
           image-ref: "docker.io/platynum/certification-authority:latest"
           format: "table"
@@ -88,3 +89,10 @@ jobs:
           ignore-unfixed: true
           vuln-type: "os,library"
           severity: "CRITICAL,HIGH"
+  syft:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Run anchore/grype vulnerability scanner"
+        uses: anchore/scan-action@v6
+        with:
+          image: "docker.io/platynum/certification-authority:latest"
