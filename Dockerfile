@@ -18,6 +18,7 @@ RUN set -ex && \
         openssl \
         openssh-client && \
     mkdir -p /usr/src/node-red /data/ctlogs /data/scripts && \
+    rm -f /etc/ssl/apache2/server.{pem,key} && \
     deluser --remove-home node && \
     adduser -h /usr/src/node-red -D -H node-red -u 1000 && \
     curl --remote-time -o /data/public_suffix_list.dat https://publicsuffix.org/list/public_suffix_list.dat && \
