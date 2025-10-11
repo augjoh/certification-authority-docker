@@ -20,7 +20,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Update submodules
-        run: git clone --depth 1 https://gitlab.com/platynum/certification-authority/flows.git flows
+        run: git clone --depth 1 --branch development https://gitlab.com/platynum/certification-authority/flows.git flows
       # https://github.com/docker/setup-qemu-action
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
