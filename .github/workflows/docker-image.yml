@@ -80,8 +80,8 @@ jobs:
   trivy:
     needs: "buildx"
     steps:
-      - name: "Run trivy vulnerability scanner"
-        uses: aquasecurity/trivy-action
+      - name: "Run aquasecurity/trivy vulnerability scanner"
+        uses: aquasecurity/trivy-action@latest
         with:
           image-ref: "docker.io/platynum/certification-authority:latest"
           format: "table"
