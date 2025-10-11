@@ -78,6 +78,7 @@ jobs:
         run: |
           rm -f ${HOME}/.docker/config.json
   trivy:
+    needs: "buildx"
     runs-on: ubuntu-latest
     steps:
       - name: "Run aquasecurity/trivy vulnerability scanner"
@@ -90,6 +91,7 @@ jobs:
           vuln-type: "os,library"
           severity: "CRITICAL,HIGH"
   syft:
+    needs: "buildx"
     runs-on: ubuntu-latest
     steps:
       - name: "Run anchore/grype vulnerability scanner"
