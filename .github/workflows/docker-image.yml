@@ -1,3 +1,4 @@
+---
 name: Docker Image CI
 
 on:
@@ -20,7 +21,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Update submodules
-        run: git clone --depth 1 https://gitlab.com/platynum/certification-authority/flows.git flows
+        run: git clone --depth 1 --branch development https://gitlab.com/platynum/certification-authority/flows.git flows
       # https://github.com/docker/setup-qemu-action
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -76,3 +77,22 @@ jobs:
         if: always()
         run: |
           rm -f ${HOME}/.docker/config.json
+  trivy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Run aquasecurity/trivy vulnerability scanner"
+        uses: aquasecurity/trivy-action@latest
+        with:
+          image-ref: "docker.io/platynum/certification-authority:latest"
+          format: "table"
+          exit-code: "1"
+          ignore-unfixed: true
+          vuln-type: "os,library"
+          severity: "CRITICAL,HIGH"
+  syft:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Run anchore/grype vulnerability scanner"
+        uses: anchore/scan-action@v6
+        with:
+          image: "docker.io/platynum/certification-authority:latest"
