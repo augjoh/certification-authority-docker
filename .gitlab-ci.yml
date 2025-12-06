@@ -63,6 +63,8 @@ downloads:
       alias: nodejs.dc-git.my.corp
   variables:
     GIT_STRATEGY: none
+    APACHE_ENABLE_RSA: "false"
+    HTTPS_CERTIFICATE_ALGORITHM: "EC"
   stage: test
   before_script:
     - apt-get -q update
@@ -132,6 +134,8 @@ ocsp:
       alias: nodejs.dc-git.my.corp
   variables:
     GIT_STRATEGY: none
+    APACHE_ENABLE_EC: "false"
+    HTTPS_CERTIFICATE_ALGORITHM: "RSA"
   stage: test
   before_script:
     - apt-get update
@@ -151,6 +155,8 @@ metrics:
       alias: nodejs.dc-git.my.corp
   variables:
     GIT_STRATEGY: none
+    APACHE_ENABLE_RSA: "false"
+    HTTPS_CERTIFICATE_ALGORITHM: "EC"
   stage: test
   before_script:
     - apt-get update
@@ -246,6 +252,8 @@ tsa:
       alias: nodejs.dc-git.my.corp
   variables:
     GIT_STRATEGY: none
+    APACHE_ENABLE_RSA: "false"
+    HTTPS_CERTIFICATE_ALGORITHM: "EC"
   stage: test
   before_script:
     - pacman --noconfirm -Syu

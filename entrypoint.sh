@@ -9,18 +9,24 @@ cd "${DATADIR}" || exit 1
 apache2() {
     APACHE2_SSL_CONF=/etc/apache2/conf.d/ssl.conf
     APACHE2_HTTPD_PID=/var/run/apache2/httpd.pid
+    APACHE_DEFINES=""
 
     rm -f "${APACHE2_HTTPD_PID}"
-
     rm -f "${APACHE2_PID_FILE:-/run/httpd/httpd.pid}"
 
-    while [ ! -f "${DATADIR}/Sub/https/https-EC.crt.pem" ]; do
-        sleep 3
-    done
+    if [ "${APACHE_ENABLE_EC}" != "false" ]; then
+        while [ ! -f "${DATADIR}/Sub/https/https-EC.crt.pem" ]; do
+            sleep 3
+        done
+        APACHE_DEFINES="-DSSLUseEC ${APACHE_DEFINES}"
+    fi
 
-    while [ ! -f "${DATADIR}/Sub/https/https-RSA.crt.pem" ]; do
-        sleep 3
-    done
+    if [ "${APACHE_ENABLE_RSA}" != "false" ]; then
+        while [ ! -f "${DATADIR}/Sub/https/https-RSA.crt.pem" ]; do
+            sleep 3
+        done
+        APACHE_DEFINES="-DSSLUseRSA ${APACHE_DEFINES}"
+    fi
 
     while ! find "${DATADIR}/Admin/crls/" -name crl.pem >/dev/null 2>&1; do
         sleep 3
@@ -52,7 +58,6 @@ apache2() {
         ln -sf "${crl}" "${SSLCARevocationPath}/${hash}.r0"
     done
 
-    APACHE_DEFINES=""
     if [ "${APACHE_OCSP_STAPLING}" = "true" ]; then
         APACHE_DEFINES="-DSSLUseStapling ${APACHE_DEFINES}"
     fi

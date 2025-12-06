@@ -10,6 +10,14 @@
 
 == Apache httpd
 
+`APACHE_ENABLE_RSA`::
+  disable RSA TLS certificate usage, when specified as `false`. By default RSA
+  certificate is used. See `HTTPS_CERTIFICATE_ALGORITHM` how to suppress RSA
+  certificate generation, too.
+`APACHE_ENABLE_EC`::
+  disable EC TLS certificate usage, when specified as `false`. By default EC
+  certificate is used. See `HTTPS_CERTIFICATE_ALGORITHM` how to suppress EC
+  certificate generation, too.
 `APACHE_OCSP_STAPLING`::
   enable OCSP stapling within apache httpd reverse proxy using the
   `SSLUseStapling` configuration option, when specified as `true`. By default
