@@ -1,0 +1,9 @@
+on: [push]
+jobs:
+  setup:
+    runs-on: self-hosted
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v4
+      - name: "Build OCI image"
+        run: buildah bud Dockerfile
