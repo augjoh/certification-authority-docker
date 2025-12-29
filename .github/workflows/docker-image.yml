@@ -50,7 +50,7 @@ jobs:
             --label org.opencontainers.image.version="$GITHUB_SHA" \
             --label org.opencontainers.image.revision="$GITHUB_SHA" \
             --tag platynum/certification-authority:latest \
-            --file Dockerfile .
+            --file Dockerfile.$(uname -s) .
       - name: Docker Login
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
