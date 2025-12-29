@@ -15,7 +15,7 @@ apache2() {
     fi
     APACHE_DEFINES=""
 
-    rm -f "${APACHE2_PID_FILE:-/run/httpd/httpd.pid}"
+    rm -f "${APACHE_PID_FILE:-/run/httpd/httpd.pid}"
 
     if [ "${APACHE_ENABLE_EC}" != "false" ]; then
         while [ ! -f "${DATADIR}/Sub/https/https-EC.crt.pem" ]; do

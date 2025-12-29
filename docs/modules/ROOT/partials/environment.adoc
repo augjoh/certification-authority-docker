@@ -10,6 +10,9 @@
 
 == Apache httpd
 
+`APACHE_PID_FILE`::
+  Process IDentifier (PID) file to be deleted, when container starts up, by
+  default `/run/httpd/httpd.pid`.
 `APACHE_ENABLE_RSA`::
   disable RSA TLS certificate usage, when specified as `false`. By default RSA
   certificate is used. See `HTTPS_CERTIFICATE_ALGORITHM` how to suppress RSA
