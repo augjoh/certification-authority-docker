@@ -79,6 +79,7 @@ jobs:
           rm -f ${HOME}/.docker/config.json
   trivy:
     needs: "buildx"
+    runs-on: ubuntu-latest
     steps:
       - name: "Run aquasecurity/trivy vulnerability scanner"
         uses: aquasecurity/trivy-action@latest
