@@ -82,7 +82,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Run aquasecurity/trivy vulnerability scanner"
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@latest
         with:
           image-ref: "docker.io/platynum/certification-authority:latest"
           format: "table"
