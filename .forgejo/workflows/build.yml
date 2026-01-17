@@ -1,0 +1,17 @@
+on: [push]
+jobs:
+  setup:
+    runs-on: self-hosted
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v4
+      - run: |
+          buildah bud --format docker --isolation chroot \
+              --label org.opencontainers.image.url="${FORGEJO_REPOSITORY}" \
+              --label org.opencontainers.image.source="${FORGEJO_REPOSITORY}" \
+              --label org.opencontainers.image.description="${CI_PROJECT_DESCRIPTION}" \
+              --label org.opencontainers.image.version="${FORGEJO_REF_NAME:=HEAD}" \
+              --label org.opencontainers.image.revision="${FORGEJO_SHA}" \
+              -t "${FORGEJO_REPOSITORY}:${FORGEJO_RUN_ID}" \
+              -f Dockerfile.$(uname -s) \
+              .
