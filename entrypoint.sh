@@ -5,9 +5,14 @@ DATADIR=/data
 # Change workdir to /data so that files (ie. certificates) are going to be
 # created there
 cd "${DATADIR}" || exit 1
+ 
+APACHE2_BINARY=$(command -v httpd)
 
 apache2() {
     APACHE2_SSL_CONF=/etc/apache2/conf.d/ssl.conf
+    if [ ! -f "${APACHE2_SSL_CONF}" ]; then
+        APACHE2_SSL_CONF=/usr/local/etc/apache24/extra/httpd-ssl.conf
+    fi
     APACHE_DEFINES=""
 
     rm -f "${APACHE2_PID_FILE:-/run/httpd/httpd.pid}"
@@ -67,7 +72,7 @@ apache2() {
         chmod 775 "${NODE_RED_UI_HOST}";
         APACHE_DEFINES="-DForwardToSocket ${APACHE_DEFINES}";
     fi
-    /usr/sbin/httpd ${APACHE_DEFINES} -k start
+    "${APACHE2_BINARY}" ${APACHE_DEFINES} -k start
     sleep 5
     tail -q /var/log/apache2/*.log
 }
@@ -95,7 +100,7 @@ if printf "%s" "${NODE_RED_UI_HOST}" | grep -q -E "^/"; then
     rm -f "${NODE_RED_UI_HOST}"
 fi
 if [ "${CONTAINER_ENABLE_APACHE}" != "false" ]; then
-    /usr/sbin/httpd -v | sed "s/^/$(date "+%d %b %H:%M:%S") - [info] /"
+    "${APACHE2_BINARY}" -v | sed "s/^/$(date "+%d %b %H:%M:%S") - [info] /"
     # This creates a zombie
     apache2 &
 fi
@@ -113,4 +118,8 @@ if [ -n "${CONTAINER_ENABLE_FLOWS}" ]; then
              select(.type != \"tab\") ]" "${DATADIR}/${FLOWS}.bck" > "${DATADIR}/${FLOWS}"
 fi
 
-exec su -c "node ${NODE_OPTIONS:=--no-node-snapshot} /usr/src/node-red/node_modules/node-red/red.js --userDir ${DATADIR} ${FLOWS}" node-red
+if [ "$(uname -s)" = "FreeBSD" ]; then
+    exec mdo -u node-red node ${NODE_OPTIONS:=--no-node-snapshot} /usr/src/node-red/node_modules/node-red/red.js --userDir "${DATADIR}" "${FLOWS}"
+else
+    exec su -c "node ${NODE_OPTIONS:=--no-node-snapshot} /usr/src/node-red/node_modules/node-red/red.js --userDir ${DATADIR} ${FLOWS}" node-red
+fi

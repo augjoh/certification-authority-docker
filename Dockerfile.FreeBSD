@@ -1,0 +1,87 @@
+FROM ghcr.io/freebsd/freebsd-toolchain:15.0 as build
+
+RUN pkg upgrade --yes \
+ && pkg install --yes node npm \
+ && mkdir -p /usr/src/node-red /data/ctlogs /data/scripts \
+ && chmod 755 /usr/src/node-red \
+ && pw user add -d /usr/src/node-red -u 1000 -n node-red \
+ && fetch -o /data/public_suffix_list.dat https://publicsuffix.org/list/public_suffix_list.dat \
+ && fetch -o /data/ctlogs/apple_log_list.json https://valid.apple.com/ct/log_list/current_log_list.json \
+ && fetch -o /data/ctlogs/chrome_log_list.json https://www.gstatic.com/ct/log_list/v3/log_list.json \
+ && fetch -o /data/ctlogs/chrome_log_list.sig https://www.gstatic.com/ct/log_list/v3/log_list.sig \
+ && fetch -o /data/ctlogs/chrome_log_list_pubkey.pem https://www.gstatic.com/ct/log_list/v3/log_list_pubkey.pem \
+ && fetch -o /data/special-use-domain.csv https://www.iana.org/assignments/special-use-domain-names/special-use-domain.csv \
+ && chown -R node-red:node-red /data
+
+# Set work directory
+WORKDIR /usr/src/node-red
+
+# Env variables
+ENV NODE_PATH=/usr/src/node-red/node_modules:/data/node_modules \
+    FLOWS=flows.json
+
+COPY --chown=node-red:node-red --chmod=644 flows/settings.js /data/settings.js
+COPY --chown=node-red:node-red --chmod=644 flows/flows.json /data/flows.json
+
+COPY --chmod=644 flows/package.json flows/[p]ackage-lock.json flows/[n]pm-shrinkwrap.json /usr/src/node-red/
+RUN npm_config_verbose=true npm ci --loglevel=verbose --omit=dev --omit=optional \
+ && npm exec --package=clean-modules --yes \
+ && npm cache clean --force \
+ && chmod -R 755 node_modules \
+ && chown -R root:wheel node_modules
+
+# Override default red.js with patched version
+COPY --chown=root:wheel --chmod=644 flows/bin/node-red-ca.js /usr/src/node-red/node_modules/node-red/red.js
+
+FROM ghcr.io/freebsd/freebsd-runtime:15.0 as base
+
+LABEL org.opencontainers.image.vendor="https://platynum.ch/" \
+      org.opencontainers.image.licenses="AGPL-3.0" \
+      org.opencontainers.image.title="platynum certification authority"
+
+# Env variables
+ENV NODE_PATH=/usr/src/node-red/node_modules:/data/node_modules \
+    FLOWS=flows.json
+
+ARG APACHE_CONFIG_DIR=/usr/local/etc/apache24
+ARG APACHE_TLS_DIR=/etc/ssl/apache24
+
+# Configure apache reverse proxy and CCA
+RUN pkg install --yes node jq apache24 \
+ && pkg delete --force --yes perl5 \
+ && mkdir -p /data/ctlogs /data/scripts $APACHE_TLS_DIR \
+ && rm -f $APACHE_TLS_DIR/server.{key,pem} \
+ && ln -svf /data/Sub/https/https-RSA.crt.pem $APACHE_TLS_DIR/server.pem \
+ && ln -svf /data/Sub/https/https-EC.crt.pem $APACHE_TLS_DIR/server-ecc.pem \
+ && ln -svf /data/Sub/https/https-RSA.priv.key.pem $APACHE_TLS_DIR/server.key \
+ && ln -svf /data/Sub/https/https-EC.priv.key.pem $APACHE_TLS_DIR/server-ecc.key \
+ && ln -svf /data/Sub/https/ca.crt.pem $APACHE_TLS_DIR/server-ca.pem \
+ && pw user add -d /usr/src/node-red -u 1000 -n node-red \
+ && chown -R node-red:node-red /data \
+ && pkg delete --force --yes pkg FreeBSD-pkg-bootstrap \
+ && rm -rvf /usr/local/share/doc /usr/local/share/man \
+            /usr/share/doc /usr/share/man \
+            /usr/local/lib/*.a \
+            /var/cache/pkg /var/db/pkg
+
+COPY httpd.conf $APACHE_CONFIG_DIR/httpd.conf
+COPY httpd-ssl.conf $APACHE_CONFIG_DIR/conf.d/ssl.conf
+
+COPY --from=build /usr/src/node-red /usr/src/node-red/
+COPY --from=build /data /data/
+
+COPY --from=build /usr/bin/mdo /usr/bin/awk /usr/bin/tail /usr/bin/
+
+# Set work directory
+WORKDIR /usr/src/node-red
+
+# Setup healthcheck
+COPY --chmod=755 healthcheck.js /usr/bin/
+HEALTHCHECK --start-period=120s \
+    CMD /usr/bin/healthcheck.js
+
+# Expose the listening port of apache/node-red
+EXPOSE 80 1880 3180 443
+
+COPY --chmod=755 entrypoint.sh /usr/bin/
+ENTRYPOINT ["/usr/bin/entrypoint.sh"]
