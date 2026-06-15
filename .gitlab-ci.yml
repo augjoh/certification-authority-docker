@@ -34,7 +34,7 @@ container:
       buildah bud --arch "${ARCH}" --variant "${VARIANT}" --format docker --isolation chroot \
           --label org.opencontainers.image.documentation="${CI_PAGES_URL}" \
           --label org.opencontainers.image.url="${CI_PROJECT_URL}" \
-          --label org.opencontainers.image.source="${CI_REPOSITORY_URL}" \
+          --label org.opencontainers.image.source="${CI_PROJECT_URL}" \
           --label org.opencontainers.image.description="${CI_PROJECT_DESCRIPTION}" \
           --label org.opencontainers.image.version="${CI_COMMIT_TAG:=HEAD}" \
           --label org.opencontainers.image.revision="${CI_COMMIT_SHA}" \
