@@ -24,6 +24,13 @@ apache2() {
         APACHE_DEFINES="-DSSLUseEC ${APACHE_DEFINES}"
     fi
 
+    if [ "${APACHE_ENABLE_ED}" != "false" ]; then
+        while [ ! -f "${DATADIR}/Sub/https/https-ED.crt.pem" ]; do
+            sleep 3
+        done
+        APACHE_DEFINES="-DSSLUseED ${APACHE_DEFINES}"
+    fi
+
     if [ "${APACHE_ENABLE_RSA}" != "false" ]; then
         while [ ! -f "${DATADIR}/Sub/https/https-RSA.crt.pem" ]; do
             sleep 3
