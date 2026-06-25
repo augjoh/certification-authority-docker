@@ -25,7 +25,7 @@ apache2() {
     fi
 
     if [ "${APACHE_ENABLE_ED}" != "false" ]; then
-        while [ ! -f "${DATADIR}/Sub/https/https-ED.crt.pem" ]; do
+        while [ ! -f "${DATADIR}/Sub/https/https-EdDSA.crt.pem" ]; do
             sleep 3
         done
         APACHE_DEFINES="-DSSLUseED ${APACHE_DEFINES}"

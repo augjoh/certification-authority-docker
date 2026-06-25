@@ -53,8 +53,10 @@ RUN pkg install --yes node jq apache24 \
  && rm -f $APACHE_TLS_DIR/server.{key,pem} \
  && ln -svf /data/Sub/https/https-RSA.crt.pem $APACHE_TLS_DIR/server.pem \
  && ln -svf /data/Sub/https/https-EC.crt.pem $APACHE_TLS_DIR/server-ecc.pem \
+ && ln -svf /data/Sub/https/https-EdDSA.crt.pem $APACHE_TLS_DIR/server-eddsa.pem \
  && ln -svf /data/Sub/https/https-RSA.priv.key.pem $APACHE_TLS_DIR/server.key \
  && ln -svf /data/Sub/https/https-EC.priv.key.pem $APACHE_TLS_DIR/server-ecc.key \
+ && ln -svf /data/Sub/https/https-EdDSA.priv.key.pem $APACHE_TLS_DIR/server-eddsa.key \
  && ln -svf /data/Sub/https/ca.crt.pem $APACHE_TLS_DIR/server-ca.pem \
  && pw user add -d /usr/src/node-red -u 1000 -n node-red \
  && chown -R node-red:node-red /data \
