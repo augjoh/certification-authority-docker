@@ -18,6 +18,10 @@
   disable EC TLS certificate usage, when specified as `false`. By default EC
   certificate is used. See `HTTPS_CERTIFICATE_ALGORITHM` how to suppress EC
   certificate generation, too.
+`APACHE_ENABLE_EDDSA`::
+  enable EdDSA TLS certificate usage, when specified as `true`. By default
+  EdDSA certificate isn't used. See `HTTPS_CERTIFICATE_ALGORITHM` how to
+  enable automatic certificate generation and renewals, too.
 `APACHE_OCSP_STAPLING`::
   enable OCSP stapling within apache httpd reverse proxy using the
   `SSLUseStapling` configuration option, when specified as `true`. By default

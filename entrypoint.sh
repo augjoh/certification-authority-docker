@@ -24,11 +24,11 @@ apache2() {
         APACHE_DEFINES="-DSSLUseEC ${APACHE_DEFINES}"
     fi
 
-    if [ "${APACHE_ENABLE_ED}" != "false" ]; then
+    if [ "${APACHE_ENABLE_EDDSA}" == "true" ]; then
         while [ ! -f "${DATADIR}/Sub/https/https-EdDSA.crt.pem" ]; do
             sleep 3
         done
-        APACHE_DEFINES="-DSSLUseED ${APACHE_DEFINES}"
+        APACHE_DEFINES="-DSSLUseEdDSA ${APACHE_DEFINES}"
     fi
 
     if [ "${APACHE_ENABLE_RSA}" != "false" ]; then
