@@ -1,3 +1,6 @@
+default:
+  image: debian:latest
+
 stages:
   - build
   - test
@@ -58,7 +61,6 @@ container:
 #        - flows/
 
 downloads:
-  image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
       alias: nodejs.dc-git.my.corp
@@ -76,7 +78,6 @@ downloads:
     - curl -v http://${HOSTNAME}/download/Root/ca.crt.pem
 
 chain:
-  image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
       alias: nodejs.dc-git.my.corp
@@ -94,7 +95,6 @@ chain:
     - openssl verify -verbose -check_ss_sig -CAfile root.crt.pem sub.crt.pem
 
 crls:
-  image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
       alias: nodejs.dc-git.my.corp
@@ -129,7 +129,6 @@ crls:
     when: on_failure
 
 ocsp:
-  image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
       alias: nodejs.dc-git.my.corp
@@ -150,7 +149,6 @@ ocsp:
     - openssl ocsp -CAfile root.crt.pem -issuer sub.crt.pem -trust_other -cert https.crt.pem -url $(openssl x509 -in https.crt.pem -noout -ocsp_uri)
 
 metrics:
-  image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
       alias: nodejs.dc-git.my.corp
@@ -215,7 +213,6 @@ ui:
     - curl -L -v --cacert /builds/Root/certificates/*/ca.crt.pem --key /builds/Admin/keys/*/???*.priv.key.pem --cert /builds/Admin/certificates/*/???*.crt.pem https://${HOSTNAME}/
 
 websocket:
-  image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
       alias: nodejs.dc-git.my.corp
@@ -268,7 +265,6 @@ tsa:
     - openssl ts -verify -in tsr.der -queryfile tsq.der -CAfile root.crt.pem
 
 acme:
-  image: debian:latest
   services:
     - name: "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
       alias: nodejs.dc-git.my.corp
