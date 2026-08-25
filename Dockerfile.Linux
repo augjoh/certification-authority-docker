@@ -1,4 +1,5 @@
 FROM docker.io/library/node:26-alpine AS base
+ARG CI_API_V4_URL=https://gitlab.com/api/v4
 
 LABEL org.opencontainers.image.vendor="https://platynum.ch/" \
       org.opencontainers.image.licenses="AGPL-3.0" \
@@ -44,6 +45,7 @@ COPY --chown=node-red:node-red --chmod=644 flows/flows.json /data/flows.json
 
 COPY --chmod=644 flows/package.json flows/[p]ackage-lock.json flows/[n]pm-shrinkwrap.json /usr/src/node-red/
 RUN apk add --no-cache python3 make g++ && \
+    npm config set @platynum:registry "${CI_API_V4_URL}/packages/npm/" && \
     npm_config_verbose=true npm ci --loglevel=verbose --omit=dev --omit=optional && \
     apk del python3 make g++ && \
     npm cache clean --force && \
