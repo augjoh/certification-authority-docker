@@ -65,7 +65,7 @@ jobs:
             --output "type=image,push=true" \
             --build-arg GIT_COMMIT=$GITHUB_SHA \
             --tag platynum/certification-authority:latest \
-            --file Dockerfile .
+            --file Dockerfile.$(uname -s) .
       - name: Docker Check Manifest
         run: |
           docker run --rm mplatform/mquery platynum/certification-authority:latest
