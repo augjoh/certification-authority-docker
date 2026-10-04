@@ -320,7 +320,7 @@ gitlab:
     - buildah manifest add --variant "v8" list "${CI_REGISTRY_IMAGE}/arm64:${CI_PIPELINE_ID}"
     - buildah manifest inspect list
     - echo "Pushing $CI_COMMIT_REF_NAME into docker://${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME/${CI_DEFAULT_BRANCH}/latest}"
-    - buildah manifest push --format=v2s2 --all list "docker://${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME/${CI_DEFAULT_BRANCH}/latest}"
+    - buildah manifest push --all list "docker://${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME/${CI_DEFAULT_BRANCH}/latest}"
     - if [ "${CI_SERVER_HOST}" = "gitlab.com" ]; then
         curl -o /usr/local/bin/cosign -O -L "https://github.com/sigstore/cosign/releases/latest/download/cosign-linux-amd64";
         chmod +x /usr/local/bin/cosign;
