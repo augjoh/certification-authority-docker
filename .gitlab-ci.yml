@@ -331,7 +331,7 @@ gitlab:
         done
       fi
   after_script:
-    - rm -f .docker/config.json
+    - rm -vf "${REGISTRY_AUTH_FILE}" ~/.docker/config.json
 
 .heroku:
   image: quay.io/buildah/stable
